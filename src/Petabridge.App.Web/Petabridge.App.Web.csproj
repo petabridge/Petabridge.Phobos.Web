@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+  <Import Project="..\common.props" />
+
+
+  <PropertyGroup>
+    <TargetFramework>$(NetCoreFramework)</TargetFramework>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <None Remove="app.conf" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <Content Include="app.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Cluster" Version="$(AkkaVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.4" />
+    <PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)" />
+    <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)" />
+    <PackageReference Include="Akka.Bootstrap.Docker">
+      <Version>0.4.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
