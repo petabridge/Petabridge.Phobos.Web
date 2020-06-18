@@ -173,7 +173,7 @@ namespace Petabridge.Phobos.Web
                 {
                     // router actor will deliver message randomly to someone in cluster
                     actors.RouterActor.Tell($"hit from {context.TraceIdentifier}");
-                    await context.Response.WriteAsync("Hello World!");
+                    await context.Response.WriteAsync($"Hello World! Request: {context.TraceIdentifier}");
                 });
             });
         }

@@ -24,7 +24,10 @@ namespace Petabridge.Phobos.Web
         private readonly ILoggingAdapter _log = Context.GetLogger();
         public ConsoleActor()
         {
-            ReceiveAny(_ => _log.Info("Received: {0}", _));
+            ReceiveAny(_ =>
+            {
+                _log.Info("Received: {0}", _);
+            });
         }
     }
 
