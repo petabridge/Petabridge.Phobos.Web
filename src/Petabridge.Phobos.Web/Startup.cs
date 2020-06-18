@@ -122,7 +122,7 @@ namespace Petabridge.Phobos.Web
                     .WithSender(builder)   // optional, defaults to UdpSender("localhost", 6831, 0)
                     .Build();
 
-                var sampler = new ConstSampler(false); // keep sampling disabled
+                var sampler = new ConstSampler(true); // keep sampling disabled
 
                 // name the service after the executing assembly
                 var tracer = new Tracer.Builder(typeof(Startup).Assembly.GetName().Name)
@@ -177,11 +177,15 @@ namespace Petabridge.Phobos.Web
             app.UseEndpoints(endpoints =>
             {
                 var actors = endpoints.ServiceProvider.GetService<AkkaActors>();
+                var tracer = endpoints.ServiceProvider.GetService<ITracer>();
                 endpoints.MapGet("/", async context =>
                 {
-                    // router actor will deliver message randomly to someone in cluster
-                    var resp = await actors.RouterActor.Ask<string>($"hit from {context.TraceIdentifier}", TimeSpan.FromSeconds(5));
-                    await context.Response.WriteAsync(resp);
+                    using (var s = tracer.BuildSpan("Cluster.Ask").StartActive())
+                    {
+                        // router actor will deliver message randomly to someone in cluster
+                        var resp = await actors.RouterForwarderActor.Ask<string>($"hit from {context.TraceIdentifier}", TimeSpan.FromSeconds(5));
+                        await context.Response.WriteAsync(resp);
+                    }
                 });
             });
         }

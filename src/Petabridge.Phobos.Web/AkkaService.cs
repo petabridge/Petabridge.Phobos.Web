@@ -33,6 +33,24 @@ namespace Petabridge.Phobos.Web
     }
 
     /// <summary>
+    /// To add some color to the traces
+    /// </summary>
+    public sealed class RouterForwaderActor : ReceiveActor
+    {
+        private readonly ILoggingAdapter _log = Context.GetLogger();
+        private readonly IActorRef _routerActor;
+        public RouterForwaderActor(IActorRef routerActor)
+        {
+            _routerActor = routerActor;
+            Receive<string>(_ =>
+            {
+                _log.Info("Received: {0}", _);
+                _routerActor.Forward(_);
+            });
+        }
+    }
+
+    /// <summary>
     /// Container for retaining actors
     /// </summary>
     public sealed class AkkaActors
@@ -42,13 +60,16 @@ namespace Petabridge.Phobos.Web
             Sys = sys;
             ConsoleActor = sys.ActorOf(Props.Create(() => new ConsoleActor()), "console");
             RouterActor = sys.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "echo");
+            RouterForwarderActor = sys.ActorOf(Props.Create(() => new RouterForwaderActor(RouterActor)), "fwd");
         }
 
         internal ActorSystem Sys { get; }
 
         public IActorRef ConsoleActor { get; }
 
-        public IActorRef RouterActor { get; }
+        internal IActorRef RouterActor { get; }
+
+        public IActorRef RouterForwarderActor { get; }
     }
 
     public class AkkaService : IHostedService
