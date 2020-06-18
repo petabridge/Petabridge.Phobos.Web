@@ -8,7 +8,7 @@ using Akka.Configuration;
 using Akka.Event;
 using Akka.Routing;
 using App.Metrics;
-using Microsoft.Extensions.DependencyInjection;
+using App.Metrics.Timer;
 using Microsoft.Extensions.Hosting;
 using OpenTracing;
 using Petabridge.Cmd.Cluster;
@@ -26,8 +26,17 @@ namespace Petabridge.Phobos.Web
         {
             Receive<string>(_ =>
             {
-                _log.Info("Received: {0}", _);
-                Sender.Tell(_);
+                // use the local metrics handle to record a timer duration for how long this block of code takes to execute
+                Context.GetInstrumentation().Monitor.Timer.Time(new TimerOptions() {Name = "ProcessingTime"}, () =>
+                {
+                    // start another span programmatically inside actor
+                    using (var newSpan = Context.GetInstrumentation().Tracer.BuildSpan("SecondOp").StartActive())
+                    {
+                        _log.Info("Received: {0}", _);
+                        Sender.Tell(_);
+
+                    }
+                });
             });
         }
     }

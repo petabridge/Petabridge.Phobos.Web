@@ -1,8 +1,22 @@
-# Petabridge.App.Web
+# Petabridge.Phobos.Web
 
-Update this readme file with your details.
+This project is a ready-made solution for testing [Phobos](https://phobos.petabridge.com/) in a real production environment using the following technologies:
 
-## Supported Commands
+- .NET Core 3.1
+- ASP.NET Core 3.1
+- [Akka.Cluster](https://getakka.net/)
+- [Prometheus](https://prometheus.io/)
+- [Jaeger Tracing](https://www.jaegertracing.io/)
+- [Grafana](https://grafana.com/)
+- [Docker](https://www.docker.com/)
+- and finally, [Kubernetes](https://kubernetes.io/)
+
+## Build and Local Deployment
+First, to build this solution you will need to [purchase a Phobos license key](https://phobos.petabridge.com/articles/setup/request.html). They cost $4,000 per year per organization with no node count or seat limitations and comes with a 30 day money-back guarantee.
+
+Once you get access to a Phobos
+
+#### Other Build Script Options
 This project supports a wide variety of commands, all of which can be listed via:
 
 **Windows**
