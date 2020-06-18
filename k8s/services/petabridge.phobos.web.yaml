@@ -72,10 +72,10 @@ spec:
             configMapKeyRef:
               name: pb-configs
               key: environment
-        - name: JAEGER_ENDPOINT
-          value: "http://jaeger-collector:14268/api/traces"    
-        - name: JAEGER_SAMPLER_TYPE
-          value: const
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent"    
+        - name: JAEGER_AGENT_PORT
+          value: "6831"
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
         livenessProbe:

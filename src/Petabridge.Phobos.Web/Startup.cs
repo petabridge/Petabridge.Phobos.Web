@@ -66,7 +66,7 @@ namespace Petabridge.Phobos.Web
                         o.ReportingEnabled = true;
                     })
                     .OutputMetrics.AsPrometheusPlainText()
-                    .Report.ToConsole().Build();
+                    .Build();
 
                 services.AddMetricsEndpoints(ep =>
                 {
@@ -113,8 +113,7 @@ namespace Petabridge.Phobos.Web
                 var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
 
                 var builder = BuildSender();
-
-                loggerFactory.CreateLogger("Tracer").Log(LogLevel.Information, "Created sender of type {0}", builder);
+                var logReporter = new LoggingReporter(loggerFactory);
 
                 var remoteReporter = new RemoteReporter.Builder()
                     .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
@@ -127,7 +126,7 @@ namespace Petabridge.Phobos.Web
 
                 // name the service after the executing assembly
                 var tracer = new Tracer.Builder(typeof(Startup).Assembly.GetName().Name)
-                    .WithReporter(remoteReporter)
+                    .WithReporter(new CompositeReporter(remoteReporter, logReporter))
                     .WithSampler(sampler)
                     .WithScopeManager(new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
 
