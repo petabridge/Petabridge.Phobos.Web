@@ -1,15 +1,7 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Akka.Actor;
-using Akka.Bootstrap.Docker;
-using Akka.Configuration;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using Petabridge.Cmd.Cluster;
-using Petabridge.Cmd.Host;
-using Petabridge.Cmd.Remote;
 
-namespace Petabridge.App.Web
+namespace Petabridge.Phobos.Web
 {
     public class Program
     {

@@ -1,11 +1,11 @@
-using Akka.Configuration;
+using Akka.Actor;
 using Akka.Actor.Dsl;
+using Akka.Configuration;
 using Akka.TestKit.Xunit2;
 using Xunit;
 using Xunit.Abstractions;
-using Akka.Actor;
 
-namespace Petabridge.App.Tests
+namespace Petabridge.Phobos.Web.Tests
 {
     public class UnitTest1 : TestKit
     {
