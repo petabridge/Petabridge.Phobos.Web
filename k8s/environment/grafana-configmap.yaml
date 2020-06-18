@@ -1927,8 +1927,8 @@ data:
         "list": []
       },
       "time": {
-        "from": "2020-06-11T16:20:47.904Z",
-        "to": "2020-06-11T18:20:47.904Z"
+        "from": "now-5m",
+        "to": "now"
       },
       "timepicker": {
         "refresh_intervals": [
