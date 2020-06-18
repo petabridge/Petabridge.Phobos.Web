@@ -30,4 +30,4 @@ COPY --from=base /root/.dotnet /root/.dotnet/
 # Needed because https://stackoverflow.com/questions/51977474/install-dotnet-core-tool-dockerfile
 ENV PATH="${PATH}:/root/.dotnet/tools"
 
-CMD ["dotnet", "Petabridge.App.Web.dll"]
+CMD ["dotnet", "Petabridge.Phobos.Web.dll"]
