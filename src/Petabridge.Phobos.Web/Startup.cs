@@ -1,3 +1,9 @@
+// -----------------------------------------------------------------------
+// <copyright file="Startup.cs" company="Petabridge, LLC">
+//      Copyright (C) 2015 - 2020 Petabridge, LLC <https://petabridge.com>
+// </copyright>
+// -----------------------------------------------------------------------
+
 using System;
 using System.IO;
 using System.Linq;
@@ -5,7 +11,6 @@ using System.Net;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Configuration;
-using Akka.Event;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using Jaeger;
@@ -19,18 +24,27 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTracing;
-using Petabridge.Cmd.Cluster;
-using Petabridge.Cmd.Host;
-using Petabridge.Cmd.Remote;
 using Phobos.Actor;
 using Phobos.Actor.Configuration;
 using Phobos.Tracing.Scopes;
-using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Petabridge.Phobos.Web
 {
     public class Startup
     {
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
+        ///     output.
+        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
+        /// </summary>
+        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
+
+        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
+
+        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
+
+        public const int DefaultJaegerAgentPort = 6832;
+
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -70,25 +84,14 @@ namespace Petabridge.Phobos.Web
 
                 services.AddMetricsEndpoints(ep =>
                 {
-                    ep.MetricsTextEndpointOutputFormatter = metrics.OutputMetricsFormatters.OfType<MetricsPrometheusTextOutputFormatter>().First();
-                    ep.MetricsEndpointOutputFormatter = metrics.OutputMetricsFormatters.OfType<MetricsPrometheusTextOutputFormatter>().First();
+                    ep.MetricsTextEndpointOutputFormatter = metrics.OutputMetricsFormatters
+                        .OfType<MetricsPrometheusTextOutputFormatter>().First();
+                    ep.MetricsEndpointOutputFormatter = metrics.OutputMetricsFormatters
+                        .OfType<MetricsPrometheusTextOutputFormatter>().First();
                 });
             });
             services.AddMetricsReportingHostedService();
         }
-
-        /// <summary>
-        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
-        ///     output.
-        ///
-        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
-        /// </summary>
-        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
-
-        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
-
-        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
-        public const int DefaultJaegerAgentPort = 6832;
 
         public static void ConfigureJaegerTracing(IServiceCollection services)
         {
@@ -98,10 +101,9 @@ namespace Petabridge.Phobos.Web
                 {
                     if (!int.TryParse(Environment.GetEnvironmentVariable(JaegerAgentPortEnvironmentVar),
                         out var udpPort))
-                    {
                         udpPort = DefaultJaegerAgentPort;
-                    }
-                    return new UdpSender(Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost",
+                    return new UdpSender(
+                        Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost",
                         udpPort, 0);
                 }
 
@@ -117,9 +119,9 @@ namespace Petabridge.Phobos.Web
 
                 var remoteReporter = new RemoteReporter.Builder()
                     .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
-                    .WithMaxQueueSize(100)            // optional, defaults to 100
+                    .WithMaxQueueSize(100) // optional, defaults to 100
                     .WithFlushInterval(TimeSpan.FromSeconds(1)) // optional, defaults to TimeSpan.FromSeconds(1)
-                    .WithSender(builder)   // optional, defaults to UdpSender("localhost", 6831, 0)
+                    .WithSender(builder) // optional, defaults to UdpSender("localhost", 6831, 0)
                     .Build();
 
                 var sampler = new ConstSampler(true); // keep sampling disabled
@@ -128,7 +130,8 @@ namespace Petabridge.Phobos.Web
                 var tracer = new Tracer.Builder(typeof(Startup).Assembly.GetName().Name)
                     .WithReporter(new CompositeReporter(remoteReporter, logReporter))
                     .WithSampler(sampler)
-                    .WithScopeManager(new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
+                    .WithScopeManager(
+                        new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
 
                 return tracer.Build();
             });
@@ -136,7 +139,7 @@ namespace Petabridge.Phobos.Web
 
         public static void ConfigureAkka(IServiceCollection services)
         {
-            services.AddSingleton<AkkaActors>(sp =>
+            services.AddSingleton(sp =>
             {
                 var metrics = sp.GetRequiredService<IMetricsRoot>();
                 var tracer = sp.GetRequiredService<ITracer>();
@@ -144,11 +147,13 @@ namespace Petabridge.Phobos.Web
                 var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker();
 
                 var phobosSetup = PhobosSetup.Create(new PhobosConfigBuilder()
-                        .WithMetrics(m => m.SetMetricsRoot(metrics)) // binds Phobos to same IMetricsRoot as ASP.NET Core
+                        .WithMetrics(m =>
+                            m.SetMetricsRoot(metrics)) // binds Phobos to same IMetricsRoot as ASP.NET Core
                         .WithTracing(t => t.SetTracer(tracer))) // binds Phobos to same tracer as ASP.NET Core
                     .WithSetup(BootstrapSetup.Create()
                         .WithConfig(config) // passes in the HOCON for Akka.NET to the ActorSystem
-                        .WithActorRefProvider(PhobosProviderSelection.Cluster)); // last line activates Phobos inside Akka.NET
+                        .WithActorRefProvider(PhobosProviderSelection
+                            .Cluster)); // last line activates Phobos inside Akka.NET
 
                 var sys = ActorSystem.Create("ClusterSys", phobosSetup);
 
@@ -163,10 +168,7 @@ namespace Petabridge.Phobos.Web
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseRouting();
 
@@ -183,7 +185,8 @@ namespace Petabridge.Phobos.Web
                     using (var s = tracer.BuildSpan("Cluster.Ask").StartActive())
                     {
                         // router actor will deliver message randomly to someone in cluster
-                        var resp = await actors.RouterForwarderActor.Ask<string>($"hit from {context.TraceIdentifier}", TimeSpan.FromSeconds(5));
+                        var resp = await actors.RouterForwarderActor.Ask<string>($"hit from {context.TraceIdentifier}",
+                            TimeSpan.FromSeconds(5));
                         await context.Response.WriteAsync(resp);
                     }
                 });
