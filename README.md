@@ -12,7 +12,9 @@ This project is a ready-made solution for testing [Phobos](https://phobos.petabr
 - and finally, [Kubernetes](https://kubernetes.io/)
 
 ## Build and Local Deployment
-First, to build this solution you will need to [purchase a Phobos license key](https://phobos.petabridge.com/articles/setup/request.html). They cost $4,000 per year per organization with no node count or seat limitations and comes with a 30 day money-back guarantee.
+Start by cloning this repository to your local system.
+
+Next - to build this solution you will need to [purchase a Phobos license key](https://phobos.petabridge.com/articles/setup/request.html). They cost $4,000 per year per organization with no node count or seat limitations and comes with a 30 day money-back guarantee.
 
 Once you purchase a [Phobos NuGet keys for your organization](https://phobos.petabridge.com/articles/setup/index.html), you're going to want to open [`NuGet.config`](NuGet.config) and add your key:
 
@@ -82,6 +84,29 @@ replicaset.apps/grafana-5f54fd5bf4                1         1         1       11
 replicaset.apps/jaeger-578558d6f9                 1         1         1       11m
 replicaset.apps/prometheus-deployment-c6d99b8b9   1         1         1       11m
 ```
+
+> NOTE: the restarts from the `phobos-web-*` pods come from calling `Dns.GetHostName()` prior to the local K8s service allocating its hostnames. Nothing to worry about - it'll resolve itself in a few moments.
+
+Once the cluster is fully up and running you can explore the application and its associated telemetry via the following Urls:
+
+* [http://localhost:1880](http://localhost:1880) - generates traffic across the Akka.NET cluster inside the `phobos-web` service.
+* [http://localhost:16686/](http://localhost:16686/) - Jaeger tracing UI. Allows to explore the traces that are distributed across the different nodes in the cluster.
+* [http://localhost:9090/](http://localhost:9090/) - Prometheus query UI.
+* [http://localhost:3000/](http://localhost:3000/) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + App.Metrics metrics:
+	- [Akka.NET Metrics](http://localhost:3000/d/I84lyfiMk/akka-net-metrics?orgId=1)
+	- [ASP.NET Core Metrics](http://localhost:3000/d/ggsijSPZz/asp-net-core-metrics?orgId=1)
+	- [Kubernetes Cluster Metrics](http://localhost:3000/d/9q974SWGz/kubernetes-pod-resources?orgId=1)
+
+There's many more metrics exported by Phobos that you can use to create your own dashboards or extend the existing ones - you can view all of them by going to [http://localhost:1880/metrics](http://localhost:1880/metrics)
+
+### Tearing Down the Cluster
+When you're done exploring this sample, you can tear down the cluster by running the following command:
+
+```
+PS> ./k8s/destroyAll.cmd
+```
+
+This will delete the `phobos-web` namespace and all of the resources inside it.
 
 #### Other Build Script Options
 This project supports a wide variety of commands, all of which can be listed via:
