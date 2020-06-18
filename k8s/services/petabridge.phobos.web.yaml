@@ -1,6 +1,26 @@
 apiVersion: v1
 kind: Service
 metadata:
+  name: phobos-webapi
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '80'
+  labels:
+    app: domain-customers
+spec:
+  type: LoadBalancer
+  ports:
+    - name: query-http
+      port: 1880
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: phobos-web
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: phobos-web
   labels:
     app: phobos-web
@@ -27,10 +47,6 @@ spec:
     metadata:
       labels:
         app: phobos-web
-      annotations:
-        prometheus.io/scrape: 'true'
-        prometheus.io/path:   /metrics
-        prometheus.io/port:   '80'
     spec:
       terminationGracePeriodSeconds: 35
       containers:
@@ -56,8 +72,8 @@ spec:
             configMapKeyRef:
               name: pb-configs
               key: environment
-        - name: JAEGER_AGENT
-          value: jaeger-agent
+        - name: JAEGER_ENDPOINT
+          value: "http://jaeger-collector:14268/api/traces"    
         - name: JAEGER_SAMPLER_TYPE
           value: const
         - name: JAEGER_SAMPLER_PARAM

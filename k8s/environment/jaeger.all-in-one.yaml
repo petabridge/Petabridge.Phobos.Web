@@ -73,9 +73,10 @@ items:
       app.kubernetes.io/name: jaeger
       app.kubernetes.io/component: query
   spec:
+    type: LoadBalancer
     ports:
       - name: query-http
-        port: 80
+        port: 16686
         protocol: TCP
         targetPort: 16686
     selector:

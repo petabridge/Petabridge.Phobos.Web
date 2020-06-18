@@ -25,6 +25,7 @@ using Petabridge.Cmd.Remote;
 using Phobos.Actor;
 using Phobos.Actor.Configuration;
 using Phobos.Tracing.Scopes;
+using LogLevel = Microsoft.Extensions.Logging.LogLevel;
 
 namespace Petabridge.Phobos.Web
 {
@@ -111,11 +112,15 @@ namespace Petabridge.Phobos.Web
             {
                 var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
 
+                var builder = BuildSender();
+
+                loggerFactory.CreateLogger("Tracer").Log(LogLevel.Information, "Created sender of type {0}", builder);
+
                 var remoteReporter = new RemoteReporter.Builder()
                     .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
                     .WithMaxQueueSize(100)            // optional, defaults to 100
                     .WithFlushInterval(TimeSpan.FromSeconds(1)) // optional, defaults to TimeSpan.FromSeconds(1)
-                    .WithSender(BuildSender())   // optional, defaults to UdpSender("localhost", 6831, 0)
+                    .WithSender(builder)   // optional, defaults to UdpSender("localhost", 6831, 0)
                     .Build();
 
                 var sampler = new ConstSampler(false); // keep sampling disabled
@@ -176,8 +181,8 @@ namespace Petabridge.Phobos.Web
                 endpoints.MapGet("/", async context =>
                 {
                     // router actor will deliver message randomly to someone in cluster
-                    actors.RouterActor.Tell($"hit from {context.TraceIdentifier}");
-                    await context.Response.WriteAsync($"Hello World! Request: {context.TraceIdentifier}");
+                    var resp = await actors.RouterActor.Ask<string>($"hit from {context.TraceIdentifier}", TimeSpan.FromSeconds(5));
+                    await context.Response.WriteAsync(resp);
                 });
             });
         }
