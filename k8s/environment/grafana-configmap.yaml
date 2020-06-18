@@ -1973,7 +1973,7 @@ data:
     datasources:
     - name: 'prometheus'
       type: prometheus
-      access: direct
+      access: proxy
       orgId: 1
       url: http://prometheus-ip-service:9090
       isDefault: true
