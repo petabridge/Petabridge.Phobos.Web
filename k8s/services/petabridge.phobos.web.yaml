@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: phobos-webapi
+  annotations:
+    prometheus.io/scrape: 'true'
+    prometheus.io/path: '/metrics'
+    prometheus.io/port: '80'
+  labels:
+    app: domain-customers
+spec:
+  type: LoadBalancer
+  ports:
+    - name: query-http
+      port: 1880
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: phobos-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phobos-web
+  labels:
+    app: phobos-web
+spec:
+  clusterIP: None
+  ports:
+  - port: 4055
+  selector:
+    app: phobos-web
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: phobos-web
+  labels:
+    app: phobos-web
+spec:
+  serviceName: "phobos-web"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: phobos-web
+  template:
+    metadata:
+      labels:
+        app: phobos-web
+    spec:
+      terminationGracePeriodSeconds: 35
+      containers:
+      - name: phobos-web
+        image: petabridge.phobos.web:0.1.0
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "pbm 127.0.0.1:9110 cluster leave"]
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: CLUSTER_SEEDS
+          value: akka.tcp://ClusterSys@phobos-web-0.phobos-web:4055,akka.tcp://ClusterSys@phobos-web-1.phobos-web:4055,akka.tcp://ClusterSys@phobos-web-2.phobos-web:4055
+        - name: CLUSTER_IP
+          value: "$(POD_NAME).phobos-web"
+        - name: CLUSTER_PORT
+          value: "4055"
+        - name: ASPNETCORE_ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: pb-configs
+              key: environment
+        - name: JAEGER_AGENT_HOST
+          value: "jaeger-agent"    
+        - name: JAEGER_AGENT_PORT
+          value: "6831"
+        - name: JAEGER_SAMPLER_PARAM
+          value: "1"
+        livenessProbe:
+          tcpSocket:
+            port: 4055
+        ports:
+        - containerPort: 4055
+          protocol: TCP
+        - containerPort: 80
+          protocol: TCP
