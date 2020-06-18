@@ -14,7 +14,74 @@ This project is a ready-made solution for testing [Phobos](https://phobos.petabr
 ## Build and Local Deployment
 First, to build this solution you will need to [purchase a Phobos license key](https://phobos.petabridge.com/articles/setup/request.html). They cost $4,000 per year per organization with no node count or seat limitations and comes with a 30 day money-back guarantee.
 
-Once you get access to a Phobos
+Once you purchase a [Phobos NuGet keys for your organization](https://phobos.petabridge.com/articles/setup/index.html), you're going to want to open [`NuGet.config`](NuGet.config) and add your key:
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <solution>
+    <add key="disableSourceControlIntegration" value="true" />
+  </solution>
+  <packageSources>
+    <clear />
+    <add key="nuget.org" value="https://api.nuget.org/v3/index.json" />
+    <add key="phobos" value="{your key here}" />
+  </packageSources>
+</configuration>
+```
+
+From there, run the following commad on the prompt:
+
+```
+PS> build.cmd Docker
+```
+
+This will create the Docker images the solution needs to run inside Kubernetes: `petabridge.phobos.web:0.1.0`.
+
+### Deploying the K8s Cluster (with Telemetry Installed)
+From there, everything you need to run the solution in Kubernetes is already defined inside the [`k8s/` folder](k8s/) - just run the following command to launch the Phobos-enabled application inside Kubernetes:
+
+```
+PS> ./k8s/deployAll.cmd
+```
+
+This will spin up a separate Kubernetes namespace, `phobos-web`, and you can view which services are deployed by running the following command:
+
+```
+PS> kubectl get all -n phobos-web
+```
+
+You should see the following or similar output:
+
+```
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/grafana-5f54fd5bf4-wvdgw                1/1     Running   0          11m
+pod/jaeger-578558d6f9-2xzdv                 1/1     Running   0          11m
+pod/phobos-web-0                            1/1     Running   3          11m
+pod/phobos-web-1                            1/1     Running   2          10m
+pod/phobos-web-2                            1/1     Running   0          9m54s
+pod/prometheus-deployment-c6d99b8b9-28tmq   1/1     Running   0          11m
+
+NAME                            TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)                               AGE
+service/grafana-ip-service      LoadBalancer   10.105.46.6      localhost     3000:31641/TCP                        11m
+service/jaeger-agent            ClusterIP      None             <none>        5775/UDP,6831/UDP,6832/UDP,5778/TCP   11m
+service/jaeger-collector        ClusterIP      10.109.248.20    <none>        14267/TCP,14268/TCP,9411/TCP          11m
+service/jaeger-query            LoadBalancer   10.109.204.203   localhost     16686:30911/TCP                       11m
+service/phobos-web              ClusterIP      None             <none>        4055/TCP                              11m
+service/phobos-webapi           LoadBalancer   10.103.247.68    localhost     1880:30424/TCP                        11m
+service/prometheus-ip-service   LoadBalancer   10.101.119.120   localhost     9090:31698/TCP                        11m
+service/zipkin                  ClusterIP      None             <none>        9411/TCP                              11m
+
+NAME                                    READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/grafana                 1/1     1            1           11m
+deployment.apps/jaeger                  1/1     1            1           11m
+deployment.apps/prometheus-deployment   1/1     1            1           11m
+
+NAME                                              DESIRED   CURRENT   READY   AGE
+replicaset.apps/grafana-5f54fd5bf4                1         1         1       11m
+replicaset.apps/jaeger-578558d6f9                 1         1         1       11m
+replicaset.apps/prometheus-deployment-c6d99b8b9   1         1         1       11m
+```
 
 #### Other Build Script Options
 This project supports a wide variety of commands, all of which can be listed via:
