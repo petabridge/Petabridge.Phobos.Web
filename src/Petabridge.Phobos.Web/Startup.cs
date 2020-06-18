@@ -166,6 +166,10 @@ namespace Petabridge.Phobos.Web
 
             app.UseRouting();
 
+            // enable App.Metrics routes
+            app.UseMetricsAllMiddleware();
+            app.UseMetricsAllEndpoints();
+
             app.UseEndpoints(endpoints =>
             {
                 var actors = endpoints.ServiceProvider.GetService<AkkaActors>();
