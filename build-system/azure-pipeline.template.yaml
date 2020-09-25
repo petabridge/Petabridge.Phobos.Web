@@ -18,12 +18,6 @@ jobs:
         submodules: recursive  # set to 'true' for a single level of submodules or 'recursive' to get submodules of submodules
         persistCredentials: true
 
-      - task: DotNetCoreCLI@2
-        inputs:
-          command: restore
-          nugetFeedType: 'external'
-          externalEndpoint: Phobos_QA_Sdkbin
-
       # Linux or macOS
       - task: Bash@3 
         displayName: Linux / OSX Build

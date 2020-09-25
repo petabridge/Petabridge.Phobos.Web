@@ -60,6 +60,13 @@ Target "AssemblyInfo" (fun _ ->
     XmlPokeInnerText "./src/common.props" "//Project/PropertyGroup/PackageReleaseNotes" (releaseNotes.Notes |> String.concat "\n")
 )
 
+Target "RestorePackages" (fun _ ->
+    let customSource = getBuildParamOrDefault "customNuGetSource" ""
+
+    if(hasBuildParam "customNuGetSource") then
+        XmlPokeInnerText "./NuGet.config" "//add[@key='phobos']/@value" customSource
+)
+
 Target "Build" (fun _ ->          
     DotNetCli.Build
         (fun p -> 
@@ -421,7 +428,7 @@ Target "Docker" DoNothing
 Target "Nuget" DoNothing
 
 // build dependencies
-"Clean" ==> "AssemblyInfo" ==> "Build" ==> "BuildRelease"
+"Clean" ==> "AssemblyInfo" ==> "RestorePackages" ==> "Build" ==> "BuildRelease"
 
 // tests dependencies
 "Build" ==> "RunTests"

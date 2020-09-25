@@ -13,6 +13,9 @@ pr:
 
 name: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
+variables:
+  - group: SdkbinPhobos
+
 jobs:
   - template: azure-pipeline.template.yaml
     parameters:
@@ -20,18 +23,18 @@ jobs:
       displayName: 'Windows PR Validation'
       vmImage: 'vs2017-win2016'
       scriptFileName: build.cmd
-      scriptArgs: all
+      scriptArgs: all customNuGetSource=$(sdkbinPreAuthenticated)
   - template: azure-pipeline.template.yaml
     parameters:
       name: 'linux_pr'
       displayName: 'Linux PR Validation'
       vmImage: 'ubuntu-16.04'
       scriptFileName: ./build.sh
-      scriptArgs: all
+      scriptArgs: all customNuGetSource=$(sdkbinPreAuthenticated)
   - template: azure-pipeline.template.yaml
     parameters:
       name: 'docker_build'
       displayName: 'Docker Build'
       vmImage: 'ubuntu-16.04'
       scriptFileName: ./build.sh
-      scriptArgs: Docker
+      scriptArgs: Docker customNuGetSource=$(sdkbinPreAuthenticated)
