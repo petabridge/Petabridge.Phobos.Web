@@ -4,6 +4,7 @@ build/
 .nuget/
 .dotnet/
 .idea/
+.vscode/
 .[Dd][Ss]_[Ss]tore
 
 ## NBench output
