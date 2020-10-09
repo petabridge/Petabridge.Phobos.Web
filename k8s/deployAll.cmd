@@ -3,7 +3,16 @@ REM deploys all Kubernetes services to their staging environment
 
 set namespace=phobos-web
 set location=%~dp0/environment
-set datadogKey="{your datadog key}"
+REM datadog key is equal to the first commandline argument
+set datadogKey="%~1" 
+
+if "%~1"=="" (
+	REM No DataDog key provided.
+	echo No DataDog API key has been provided. Can't complete deployment.
+	echo Run the script using the following syntax:
+    echo 'deployAll.cmd [datadog apiKey]'
+    exit 1
+) 
 
 echo "Deploying K8s resources from [%location%] into namespace [%namespace%]"
 
