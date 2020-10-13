@@ -40,11 +40,16 @@ PS> build.cmd Docker
 
 This will create the Docker images the solution needs to run inside Kubernetes: `petabridge.phobos.web:0.1.0`.
 
+## Working with DataDog
+This sample is designed to work with [DataDog Application Performance Monitoring](https://datadoghq.com).
+
+To run this sample, you will need a copy of your DataDog API Key - which will be passed into the local Kubernetes cluster created by this tutorial.
+
 ### Deploying the K8s Cluster (with Telemetry Installed)
 From there, everything you need to run the solution in Kubernetes is already defined inside the [`k8s/` folder](k8s/) - just run the following command to launch the Phobos-enabled application inside Kubernetes:
 
 ```
-PS> ./k8s/deployAll.cmd
+PS> ./k8s/deployAll.cmd [DataDog API Key]
 ```
 
 This will spin up a separate Kubernetes namespace, `phobos-web`, and you can view which services are deployed by running the following command:
