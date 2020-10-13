@@ -78,6 +78,10 @@ spec:
           value: "6831"
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
         livenessProbe:
           tcpSocket:
             port: 4055
