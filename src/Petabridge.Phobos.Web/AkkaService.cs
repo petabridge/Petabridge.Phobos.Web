@@ -8,6 +8,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
+using Akka.Cluster.Tools.PublishSubscribe;
 using Akka.Event;
 using Akka.Routing;
 using App.Metrics.Timer;
@@ -60,6 +61,43 @@ namespace Petabridge.Phobos.Web
         }
     }
 
+    public sealed class PublisherActor : ReceiveActor
+    {
+        public PublisherActor()
+        {
+            // activate the extension
+            var mediator = DistributedPubSub.Get(Context.System).Mediator;
+            
+            ReceiveAny(m => mediator.Tell(new Publish("someTopic", m)));
+        }
+    }
+
+    public sealed class SubscriberActor : ReceiveActor
+    {
+        public SubscriberActor()
+        {
+            var mediator = DistributedPubSub.Get(Context.System).Mediator;
+
+            // subscribe to the topic named "content"
+            mediator.Tell(new Subscribe("someTopic", Self));
+            
+            Receive<SubscribeAck>(subscribeAck =>
+            {
+                if (subscribeAck.Subscribe.Topic.Equals("content")
+                    && subscribeAck.Subscribe.Ref.Equals(Self)
+                    && subscribeAck.Subscribe.Group == null)
+                {
+                    Context.GetLogger().Info("subscribing");
+                }
+            });
+            
+            ReceiveAny(s =>
+            {
+                Context.GetLogger().Info($"Got {s}");
+            });
+        }
+    }
+
     /// <summary>
     ///     Container for retaining actors
     /// </summary>
@@ -71,6 +109,8 @@ namespace Petabridge.Phobos.Web
             ConsoleActor = sys.ActorOf(Props.Create(() => new ConsoleActor()), "console");
             RouterActor = sys.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "echo");
             RouterForwarderActor = sys.ActorOf(Props.Create(() => new RouterForwaderActor(RouterActor)), "fwd");
+            Publisher = sys.ActorOf(Props.Create<PublisherActor>(), "publisher");
+            Subscriber = sys.ActorOf(Props.Create<SubscriberActor>(), "subscriber");
         }
 
         internal ActorSystem Sys { get; }
@@ -80,6 +120,9 @@ namespace Petabridge.Phobos.Web
         internal IActorRef RouterActor { get; }
 
         public IActorRef RouterForwarderActor { get; }
+        
+        public IActorRef Publisher { get; }
+        public IActorRef Subscriber { get; }
     }
 
     public class AkkaService : IHostedService

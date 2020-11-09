@@ -187,6 +187,10 @@ namespace Petabridge.Phobos.Web
                         // router actor will deliver message randomly to someone in cluster
                         var resp = await actors.RouterForwarderActor.Ask<string>($"hit from {context.TraceIdentifier}",
                             TimeSpan.FromSeconds(5));
+                        var publishedMessage = "publishPackage";
+                        // Publish message to distributed pub-sub
+                        actors.Publisher.Tell(publishedMessage);
+                        
                         await context.Response.WriteAsync(resp);
                     }
                 });
