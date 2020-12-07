@@ -13,10 +13,7 @@ using Akka.Bootstrap.Docker;
 using Akka.Configuration;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
-using Jaeger;
-using Jaeger.Reporters;
-using Jaeger.Samplers;
-using Jaeger.Senders;
+using Datadog.Trace.OpenTracing;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +23,7 @@ using Microsoft.Extensions.Logging;
 using OpenTracing;
 using Phobos.Actor;
 using Phobos.Actor.Configuration;
+using Phobos.Tracing;
 using Phobos.Tracing.Scopes;
 
 namespace Petabridge.Phobos.Web
@@ -57,11 +55,11 @@ namespace Petabridge.Phobos.Web
                 o.AddCoreFx();
             });
 
-            // sets up Prometheus + ASP.NET Core metrics
+            // sets up Prometheus + DataDog + ASP.NET Core metrics
             ConfigureAppMetrics(services);
 
-            // sets up Jaeger tracing
-            ConfigureJaegerTracing(services);
+            // sets up DataDog tracing
+            ConfigureDataDogTracing(services);
 
             // sets up Akka.NET
             ConfigureAkka(services);
@@ -80,6 +78,13 @@ namespace Petabridge.Phobos.Web
                         o.ReportingEnabled = true;
                     })
                     .OutputMetrics.AsPrometheusPlainText()
+                    .Report.ToDatadogHttp(options => {
+                        options.Datadog.BaseUri = new Uri($"http://{Environment.GetEnvironmentVariable("DD_AGENT_HOST")}");
+                        options.HttpPolicy.BackoffPeriod = TimeSpan.FromSeconds(30);
+                        options.HttpPolicy.FailuresBeforeBackoff = 5;
+                        options.HttpPolicy.Timeout = TimeSpan.FromSeconds(10);
+                        options.FlushInterval = TimeSpan.FromSeconds(20);
+                    })
                     .Build();
 
                 services.AddMetricsEndpoints(ep =>
@@ -93,47 +98,12 @@ namespace Petabridge.Phobos.Web
             services.AddMetricsReportingHostedService();
         }
 
-        public static void ConfigureJaegerTracing(IServiceCollection services)
+        public static void ConfigureDataDogTracing(IServiceCollection services)
         {
-            static ISender BuildSender()
-            {
-                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(JaegerEndpointEnvironmentVar)))
-                {
-                    if (!int.TryParse(Environment.GetEnvironmentVariable(JaegerAgentPortEnvironmentVar),
-                        out var udpPort))
-                        udpPort = DefaultJaegerAgentPort;
-                    return new UdpSender(
-                        Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost",
-                        udpPort, 0);
-                }
-
-                return new HttpSender(Environment.GetEnvironmentVariable(JaegerEndpointEnvironmentVar));
-            }
-
+            // Add DataDog Tracing
             services.AddSingleton<ITracer>(sp =>
             {
-                var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-
-                var builder = BuildSender();
-                var logReporter = new LoggingReporter(loggerFactory);
-
-                var remoteReporter = new RemoteReporter.Builder()
-                    .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
-                    .WithMaxQueueSize(100) // optional, defaults to 100
-                    .WithFlushInterval(TimeSpan.FromSeconds(1)) // optional, defaults to TimeSpan.FromSeconds(1)
-                    .WithSender(builder) // optional, defaults to UdpSender("localhost", 6831, 0)
-                    .Build();
-
-                var sampler = new ConstSampler(true); // keep sampling disabled
-
-                // name the service after the executing assembly
-                var tracer = new Tracer.Builder(typeof(Startup).Assembly.GetName().Name)
-                    .WithReporter(new CompositeReporter(remoteReporter, logReporter))
-                    .WithSampler(sampler)
-                    .WithScopeManager(
-                        new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
-
-                return tracer.Build();
+                return OpenTracingTracerFactory.CreateTracer().WithScopeManager(new ActorScopeManager());
             });
         }
 
