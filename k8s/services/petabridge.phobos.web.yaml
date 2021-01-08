@@ -81,6 +81,10 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 4055
+        readinessProbe:
+          httpGet:
+            path: "/"
+            port: 80
         ports:
         - containerPort: 4055
           protocol: TCP
