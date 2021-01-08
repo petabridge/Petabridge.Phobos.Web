@@ -54,7 +54,7 @@ namespace Petabridge.Phobos.Web
             {
                 o.ConfigureAspNetCore(a =>
                     a.Hosting.OperationNameResolver = context => $"{context.Request.Method} {context.Request.Path}");
-                o.AddCoreFx();
+                o.ConfigureGenericDiagnostics(c => {});
             });
 
             // sets up Prometheus + ASP.NET Core metrics
