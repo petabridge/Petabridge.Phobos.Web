@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Routing;
+using Akka.Util;
 using App.Metrics.Timer;
 using Microsoft.Extensions.Hosting;
 using Petabridge.Cmd.Cluster;
@@ -19,6 +20,39 @@ using Phobos.Actor;
 
 namespace Petabridge.Phobos.Web
 {
+    public sealed class ChildActor : ReceiveActor
+    {
+        private readonly ILoggingAdapter _log = Context.GetLogger();
+
+        public ChildActor()
+        {
+            ReceiveAny(_ =>
+            {
+                if (ThreadLocalRandom.Current.Next(0, 3) == 1)
+                {
+                    throw new ApplicationException("I'm crashing!");
+                }
+
+                _log.Info("Received: {0}", _);
+                Sender.Tell(_);
+                Self.Tell(PoisonPill.Instance);
+
+                if (ThreadLocalRandom.Current.Next(0, 4) == 2)
+                {
+                    // send a random integer to our parent in order to generate an "unhandled"
+                    // message periodically
+                    Context.Parent.Tell(ThreadLocalRandom.Current.Next());
+                }
+            });
+        }
+
+        protected override void PreRestart(Exception reason, object message)
+        {
+            // re-send the message that caused us to crash so we can reprocess
+            Self.Tell(message, Sender);
+        }
+    }
+
     public sealed class ConsoleActor : ReceiveActor
     {
         private readonly ILoggingAdapter _log = Context.GetLogger();
@@ -33,8 +67,7 @@ namespace Petabridge.Phobos.Web
                     // start another span programmatically inside actor
                     using (var newSpan = Context.GetInstrumentation().Tracer.BuildSpan("SecondOp").StartActive())
                     {
-                        _log.Info("Received: {0}", _);
-                        Sender.Tell(_);
+                        Context.ActorOf(Props.Create(() => new ChildActor())).Forward(_);
                     }
                 });
             });
@@ -44,12 +77,12 @@ namespace Petabridge.Phobos.Web
     /// <summary>
     ///     To add some color to the traces
     /// </summary>
-    public sealed class RouterForwaderActor : ReceiveActor
+    public sealed class RouterForwarderActor : ReceiveActor
     {
         private readonly ILoggingAdapter _log = Context.GetLogger();
         private readonly IActorRef _routerActor;
 
-        public RouterForwaderActor(IActorRef routerActor)
+        public RouterForwarderActor(IActorRef routerActor)
         {
             _routerActor = routerActor;
             Receive<string>(_ =>
@@ -70,7 +103,7 @@ namespace Petabridge.Phobos.Web
             Sys = sys;
             ConsoleActor = sys.ActorOf(Props.Create(() => new ConsoleActor()), "console");
             RouterActor = sys.ActorOf(Props.Empty.WithRouter(FromConfig.Instance), "echo");
-            RouterForwarderActor = sys.ActorOf(Props.Create(() => new RouterForwaderActor(RouterActor)), "fwd");
+            RouterForwarderActor = sys.ActorOf(Props.Create(() => new RouterForwarderActor(RouterActor)), "fwd");
         }
 
         internal ActorSystem Sys { get; }

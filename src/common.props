@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2019-2020 Petabridge</Copyright>
+    <Copyright>Copyright © 2019-2021 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.1.3</VersionPrefix>
     <PackageReleaseNotes>First release</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
@@ -21,6 +21,6 @@
     <AkkaVersion>1.4.16</AkkaVersion>
     <PbmVersion>0.8.2</PbmVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
-    <PhobosVersion>1.0.5</PhobosVersion>
+    <PhobosVersion>1.1.0</PhobosVersion>
   </PropertyGroup>
 </Project>
