@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="AkkaService.cs" company="Petabridge, LLC">
-//      Copyright (C) 2015 - 2020 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2021 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -28,21 +28,16 @@ namespace Petabridge.Phobos.Web
         {
             ReceiveAny(_ =>
             {
-                if (ThreadLocalRandom.Current.Next(0, 3) == 1)
-                {
-                    throw new ApplicationException("I'm crashing!");
-                }
+                if (ThreadLocalRandom.Current.Next(0, 3) == 1) throw new ApplicationException("I'm crashing!");
 
                 _log.Info("Received: {0}", _);
                 Sender.Tell(_);
                 Self.Tell(PoisonPill.Instance);
 
                 if (ThreadLocalRandom.Current.Next(0, 4) == 2)
-                {
                     // send a random integer to our parent in order to generate an "unhandled"
                     // message periodically
                     Context.Parent.Tell(ThreadLocalRandom.Current.Next());
-                }
             });
         }
 

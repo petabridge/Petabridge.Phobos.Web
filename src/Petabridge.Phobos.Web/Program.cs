@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright file="Program.cs" company="Petabridge, LLC">
-//      Copyright (C) 2015 - 2020 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2021 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
