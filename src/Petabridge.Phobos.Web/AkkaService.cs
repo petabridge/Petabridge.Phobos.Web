@@ -17,6 +17,7 @@ using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
 using Phobos.Actor;
+using SerilogLogMessageFormatter = Akka.Logger.Serilog.SerilogLogMessageFormatter;
 
 namespace Petabridge.Phobos.Web
 {
@@ -50,7 +51,7 @@ namespace Petabridge.Phobos.Web
 
     public sealed class ConsoleActor : ReceiveActor
     {
-        private readonly ILoggingAdapter _log = Context.GetLogger();
+        private readonly ILoggingAdapter _log = Context.GetLogger(SerilogLogMessageFormatter.Instance);
 
         public ConsoleActor()
         {
@@ -62,7 +63,10 @@ namespace Petabridge.Phobos.Web
                     // start another span programmatically inside actor
                     using (var newSpan = Context.GetInstrumentation().Tracer.BuildSpan("SecondOp").StartActive())
                     {
-                        Context.ActorOf(Props.Create(() => new ChildActor())).Forward(_);
+                        var child = Context.ActorOf(Props.Create(() => new ChildActor()));
+                        _log.Info("Spawned {child}", child);
+
+                        child.Forward(_);
                     }
                 });
             });
