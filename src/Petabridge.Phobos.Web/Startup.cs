@@ -1,6 +1,6 @@
 // -----------------------------------------------------------------------
 // <copyright file="Startup.cs" company="Petabridge, LLC">
-//      Copyright (C) 2015 - 2020 Petabridge, LLC <https://petabridge.com>
+//      Copyright (C) 2015 - 2021 Petabridge, LLC <https://petabridge.com>
 // </copyright>
 // -----------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ namespace Petabridge.Phobos.Web
                     // skip Prometheus HTTP /metrics collection from appearing in our tracing system
                     a.Hosting.IgnorePatterns.Add(x => x.Request.Path.StartsWithSegments(new PathString("/metrics")));
                 });
-                o.ConfigureGenericDiagnostics(c => {});
+                o.ConfigureGenericDiagnostics(c => { });
             });
 
             // sets up Prometheus + ASP.NET Core metrics
@@ -72,6 +72,7 @@ namespace Petabridge.Phobos.Web
             // sets up Akka.NET
             ConfigureAkka(services);
         }
+
 
         public static void ConfigureAppMetrics(IServiceCollection services)
         {
@@ -150,7 +151,9 @@ namespace Petabridge.Phobos.Web
                 var metrics = sp.GetRequiredService<IMetricsRoot>();
                 var tracer = sp.GetRequiredService<ITracer>();
 
-                var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker();
+                var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
+                    .BootstrapFromDocker()
+                    .UseSerilog();
 
                 var phobosSetup = PhobosSetup.Create(new PhobosConfigBuilder()
                         .WithMetrics(m =>

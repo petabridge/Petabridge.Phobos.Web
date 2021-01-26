@@ -94,9 +94,10 @@ Once the cluster is fully up and running you can explore the application and its
 * [http://localhost:16686/](http://localhost:16686/) - Jaeger tracing UI. Allows to explore the traces that are distributed across the different nodes in the cluster.
 * [http://localhost:9090/](http://localhost:9090/) - Prometheus query UI.
 * [http://localhost:3000/](http://localhost:3000/) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + App.Metrics metrics:
-	- [Akka.NET Metrics](http://localhost:3000/d/I84lyfiMk/akka-net-metrics?orgId=1)
+	- [Akka.NET Cluster Metrics](https://grafana.com/grafana/dashboards/13775) - install via "Dashboard Import"
 	- [ASP.NET Core Metrics](http://localhost:3000/d/ggsijSPZz/asp-net-core-metrics?orgId=1)
 	- [Kubernetes Cluster Metrics](http://localhost:3000/d/9q974SWGz/kubernetes-pod-resources?orgId=1)
+* [http://localhost:8988/](http://localhost:8988/) - Seq log aggregation.
 
 There's many more metrics exported by Phobos that you can use to create your own dashboards or extend the existing ones - you can view all of them by going to [http://localhost:1880/metrics](http://localhost:1880/metrics)
 
