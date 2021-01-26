@@ -73,6 +73,8 @@ namespace Petabridge.Phobos.Web
             ConfigureAkka(services);
         }
 
+        
+
         public static void ConfigureAppMetrics(IServiceCollection services)
         {
             services.AddMetricsTrackingMiddleware();
@@ -150,7 +152,9 @@ namespace Petabridge.Phobos.Web
                 var metrics = sp.GetRequiredService<IMetricsRoot>();
                 var tracer = sp.GetRequiredService<ITracer>();
 
-                var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf")).BootstrapFromDocker();
+                var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
+                    .BootstrapFromDocker()
+                    .UseSerilog();
 
                 var phobosSetup = PhobosSetup.Create(new PhobosConfigBuilder()
                         .WithMetrics(m =>
