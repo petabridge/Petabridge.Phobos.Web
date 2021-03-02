@@ -1670,6 +1670,60 @@ data:
     }
    akkadotnet-dashboard.json: |
     {
+      "__inputs": [
+        {
+          "name": "DS_PROMETHEUS",
+          "label": "prometheus",
+          "description": "",
+          "type": "datasource",
+          "pluginId": "prometheus",
+          "pluginName": "Prometheus"
+        }
+      ],
+      "__requires": [
+        {
+          "type": "panel",
+          "id": "bargauge",
+          "name": "Bar gauge",
+          "version": ""
+        },
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "7.3.7"
+        },
+        {
+          "type": "panel",
+          "id": "graph",
+          "name": "Graph",
+          "version": ""
+        },
+        {
+          "type": "datasource",
+          "id": "prometheus",
+          "name": "Prometheus",
+          "version": "1.0.0"
+        },
+        {
+          "type": "panel",
+          "id": "stat",
+          "name": "Stat",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "table",
+          "name": "Table",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "table-old",
+          "name": "Table (old)",
+          "version": ""
+        }
+      ],
       "annotations": {
         "list": [
           {
@@ -1683,27 +1737,241 @@ data:
           }
         ]
       },
+      "description": "System-wide Akka.NET metrics used for profiling Akka.NET performance",
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "id": 3,
+      "id": null,
+      "iteration": 1611599388935,
       "links": [],
       "panels": [
         {
+          "collapsed": false,
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 0
+          },
+          "id": 23,
+          "panels": [],
+          "title": "Cluster Status",
+          "type": "row"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Total number of active Akka.Cluster Members.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 19,
+            "x": 0,
+            "y": 1
+          },
+          "id": 25,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"Up\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Up",
+              "refId": "A"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"WeaklyUp\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "WeaklyUp",
+              "refId": "B"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"Joining\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Joining",
+              "refId": "C"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"Leaving\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Leaving",
+              "refId": "D"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"Exiting\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Exiting",
+              "refId": "E"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_members{status=\"Down\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "Down",
+              "refId": "F"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Active Cluster Size",
+          "transformations": [],
+          "type": "stat"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "All nodes in the cluster that are detected to be unreachable.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 5,
+            "x": 19,
+            "y": 1
+          },
+          "id": 27,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_reachable))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Unreachable Nodes",
+          "type": "stat"
+        },
+        {
+          "alert": {
+            "alertRuleTags": {},
+            "conditions": [
+              {
+                "evaluator": {
+                  "params": [
+                    0
+                  ],
+                  "type": "gt"
+                },
+                "operator": {
+                  "type": "and"
+                },
+                "query": {
+                  "params": [
+                    "B",
+                    "1m",
+                    "now"
+                  ]
+                },
+                "reducer": {
+                  "params": [],
+                  "type": "avg"
+                },
+                "type": "query"
+              }
+            ],
+            "executionErrorState": "keep_state",
+            "for": "1m",
+            "frequency": "30s",
+            "handler": 1,
+            "message": "{{B}} nodes have been unreachable for at least 1 minute.",
+            "name": "Unreachable Akka.Cluster Nodes",
+            "noDataState": "no_data",
+            "notifications": []
+          },
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": "prometheus",
-          "description": "Aggregates total Akka.NET message throughput per application per Kubernetes namespace.",
-          "fill": 1,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 0,
-            "y": 0
+          "description": "Tracks all nodes by their membership status and reachability.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
           },
-          "id": 2,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 8
+          },
+          "hiddenSeries": false,
+          "id": 29,
           "legend": {
             "avg": false,
             "current": false,
@@ -1715,30 +1983,47 @@ data:
           },
           "lines": true,
           "linewidth": 1,
-          "links": [],
           "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
           "percentage": false,
-          "pointradius": 5,
+          "pluginVersion": "7.3.7",
+          "pointradius": 2,
           "points": false,
           "renderer": "flot",
           "seriesOverrides": [],
           "spaceLength": 10,
           "stack": false,
-          "steppedLine": false,
+          "steppedLine": true,
           "targets": [
             {
-              "expr": "sum by(app,kubernetes_namespace)(irate(akka_net_akka_messages_recv_total[1m]))",
-              "format": "time_series",
-              "intervalFactor": 1,
-              "legendFormat": "",
+              "expr": "ceil(avg by(status)(akka_net_akka_cluster_members))",
+              "interval": "",
+              "legendFormat": "{{status}}",
               "refId": "A"
+            },
+            {
+              "expr": "ceil(avg(akka_net_akka_cluster_reachable))",
+              "instant": false,
+              "interval": "",
+              "legendFormat": "Unreachable",
+              "refId": "B"
             }
           ],
-          "thresholds": [],
+          "thresholds": [
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 0
+            }
+          ],
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Akka.NET Msg Processing Rate",
+          "title": "Cluster Nodes by Status",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1776,25 +2061,49 @@ data:
           }
         },
         {
+          "collapsed": false,
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 8,
+          "panels": [],
+          "title": "Logging and Error Rates",
+          "type": "row"
+        },
+        {
           "aliasColors": {},
           "bars": false,
           "dashLength": 10,
           "dashes": false,
           "datasource": "prometheus",
-          "description": "Aggregates total Akka.NET message throughput per application per Kubernetes namespace per node.",
-          "fill": 1,
-          "gridPos": {
-            "h": 9,
-            "w": 12,
-            "x": 12,
-            "y": 0
+          "description": "Total aggregate logging activity per-second for each node in an Akka.NET cluster.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
           },
-          "id": 3,
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 15
+          },
+          "hiddenSeries": false,
+          "id": 6,
           "legend": {
+            "alignAsTable": true,
             "avg": false,
             "current": false,
             "max": false,
             "min": false,
+            "rightSide": true,
             "show": true,
             "total": false,
             "values": false
@@ -1803,20 +2112,45 @@ data:
           "linewidth": 1,
           "links": [],
           "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
           "percentage": false,
+          "pluginVersion": "7.3.7",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
-          "seriesOverrides": [],
+          "seriesOverrides": [
+            {
+              "alias": "error",
+              "color": "#F2495C",
+              "fill": 1
+            },
+            {
+              "alias": "warning",
+              "color": "#FA6400",
+              "fill": 2
+            },
+            {
+              "alias": "info",
+              "color": "#73BF69"
+            },
+            {
+              "alias": "debug",
+              "color": "#C8F2C2"
+            }
+          ],
           "spaceLength": 10,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(app,host,kubernetes_namespace)(irate(akka_net_akka_messages_recv_total[1m]))",
+              "expr": "sum by(level)(increase(akka_net_akka_logs{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
               "format": "time_series",
+              "instant": false,
+              "interval": "",
               "intervalFactor": 1,
-              "legendFormat": "",
+              "legendFormat": "{{level}}",
               "refId": "A"
             }
           ],
@@ -1824,7 +2158,7 @@ data:
           "timeFrom": null,
           "timeRegions": [],
           "timeShift": null,
-          "title": "Akka.NET Msg Processing Rate per Node",
+          "title": "Cluster Logging Activity",
           "tooltip": {
             "shared": true,
             "sort": 0,
@@ -1864,32 +2198,41 @@ data:
         {
           "columns": [],
           "datasource": "prometheus",
+          "description": "Groups all exceptions detected in Akka.NET logs by type.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
           "fontSize": "100%",
           "gridPos": {
-            "h": 8,
-            "w": 24,
+            "h": 9,
+            "w": 12,
             "x": 0,
-            "y": 9
+            "y": 23
           },
-          "hideTimeOverride": false,
-          "id": 5,
+          "id": 10,
           "links": [],
           "pageSize": null,
           "scroll": true,
           "showHeader": true,
           "sort": {
-            "col": 4,
+            "col": 0,
             "desc": true
           },
           "styles": [
             {
               "alias": "Time",
+              "align": "auto",
               "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "link": false,
               "pattern": "Time",
-              "type": "date"
+              "type": "hidden"
             },
             {
               "alias": "",
+              "align": "auto",
               "colorMode": null,
               "colors": [
                 "rgba(245, 54, 54, 0.9)",
@@ -1905,26 +2248,628 @@ data:
           ],
           "targets": [
             {
-              "expr": "sum by(app,actortype,messagetype)(avg_over_time(akka_net_akka_messages_recv_total[1h]))",
+              "expr": "sum by(cluster_role,akka_address,exceptiontype)(ceil(increase(akka_net_akka_logs{cluster_role=~\"$role\",akka_address=~\"$address\",exceptiontype=~\".+\"}[5m])))",
               "format": "table",
               "instant": true,
-              "interval": "1h",
-              "intervalFactor": 10,
+              "interval": "",
+              "intervalFactor": 1,
               "legendFormat": "",
               "refId": "A"
             }
           ],
-          "title": "Akka.NET Avg Messages Processed by Type (1hr)",
+          "title": "Exceptions by Type (over 5m)",
           "transform": "table",
+          "type": "table-old"
+        },
+        {
+          "cacheTimeout": null,
+          "datasource": "prometheus",
+          "description": "Total errors logged by Akka.NET over past 5 minutes, cumulative for all roles / cluster / exception types.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [
+                {
+                  "id": 0,
+                  "op": "=",
+                  "text": "N/A",
+                  "type": 1,
+                  "value": "null"
+                }
+              ],
+              "nullValueMode": "connected",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "none"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 12,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "sum(increase(akka_net_akka_logs{level=\"error\",cluster_role=~\"$role\",akka_address=~\"$address\"}[5m]))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Errors Logged (5m)",
+          "type": "stat"
+        },
+        {
+          "collapsed": false,
+          "datasource": "prometheus",
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 32
+          },
+          "id": 2,
+          "panels": [],
+          "repeat": "role",
+          "title": "Actor Metrics",
+          "type": "row"
+        },
+        {
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "prometheus",
+          "description": "The full set of Akka.NET actors running on all nodes for all roles in a cluster.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 33
+          },
+          "hiddenSeries": false,
+          "id": 4,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null",
+          "options": {
+            "alertThreshold": true
+          },
+          "percentage": false,
+          "pluginVersion": "7.3.7",
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "repeat": null,
+          "repeatDirection": "h",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
+            {
+              "expr": "sum by(cluster_role,akka_address)(akka_net_akka_actor_created{cluster_role=~\"$role\",akka_address=~\"$address\"}) - sum by(cluster_role,akka_address)(akka_net_akka_actor_stopped{cluster_role=~\"$role\",akka_address=~\"$address\"})",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "Total Actors [{{cluster_role}} ({{akka_address}})]",
+              "refId": "A"
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Total Akka.NET Actors",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "cacheTimeout": null,
+          "datasource": "prometheus",
+          "description": "Cumulative Akka.NET messaging throughput across all selected nodes and roles.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [
+                {
+                  "id": 0,
+                  "op": "=",
+                  "text": "N/A",
+                  "type": 1,
+                  "value": "null"
+                }
+              ],
+              "nullValueMode": "connected",
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "id": 16,
+          "interval": null,
+          "links": [],
+          "maxDataPoints": 100,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "last"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "textMode": "auto"
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "sum(irate(akka_net_akka_messages_recv_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
+              "format": "time_series",
+              "instant": false,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Total Actor Throughput (msg/s)",
+          "type": "stat"
+        },
+        {
+          "columns": [],
+          "datasource": "prometheus",
+          "description": "Top 10 actor starts / stops by type.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "fontSize": "100%",
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 42
+          },
+          "id": 14,
+          "links": [],
+          "pageSize": null,
+          "scroll": true,
+          "showHeader": true,
+          "sort": {
+            "col": 2,
+            "desc": true
+          },
+          "styles": [
+            {
+              "alias": "Time",
+              "align": "auto",
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "link": false,
+              "pattern": "Time",
+              "type": "date"
+            },
+            {
+              "alias": "Created",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "decimals": 2,
+              "pattern": "Value #A",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            },
+            {
+              "alias": "Terminated",
+              "align": "auto",
+              "colorMode": null,
+              "colors": [
+                "rgba(245, 54, 54, 0.9)",
+                "rgba(237, 129, 40, 0.89)",
+                "rgba(50, 172, 45, 0.97)"
+              ],
+              "dateFormat": "YYYY-MM-DD HH:mm:ss",
+              "decimals": 2,
+              "mappingType": 1,
+              "pattern": "Value",
+              "thresholds": [],
+              "type": "number",
+              "unit": "short"
+            }
+          ],
+          "targets": [
+            {
+              "expr": "topk(10,sum by(actortype)(akka_net_akka_actor_created{cluster_role=~\"$role\",akka_address=~\"$address\"}))",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "intervalFactor": 1,
+              "legendFormat": "{{actortype}} created",
+              "refId": "A"
+            },
+            {
+              "expr": "topk(10,sum by(actortype)(akka_net_akka_actor_stopped{cluster_role=~\"$role\",akka_address=~\"$address\"}))",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{actortype}} terminated",
+              "refId": "B"
+            }
+          ],
+          "title": "Live Actors by Type (Top 10)",
+          "transform": "table",
+          "transformations": [
+            {
+              "id": "labelsToFields",
+              "options": {}
+            }
+          ],
+          "type": "table-old"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Top 10 actor type / exception type pairs, based on the number of crashes per second observed over a 30 minute timespan.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": null,
+                "filterable": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 42
+          },
+          "id": 20,
+          "options": {
+            "showHeader": true
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "topk(10,sum by(actortype, exceptiontype)(rate(akka_net_akka_actor_restarts[30m])))",
+              "format": "table",
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{actortype}},{{exceptiontype}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Actor Crashes by Actor / Exception (Top 10)",
           "type": "table"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Akka.NET message throughput by message type.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 0,
+            "y": 51
+          },
+          "id": 18,
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "topk(10,sum by(messagetype)(rate(akka_net_akka_messages_recv_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{messagetype}}",
+              "refId": "A"
+            },
+            {
+              "expr": "sum by(messagetype)(irate(akka_net_akka_messages_recv_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
+              "hide": true,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{messagetype}}",
+              "refId": "B"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Akka.NET Message Throughput by Type  (Top 10)",
+          "transformations": [],
+          "type": "bargauge"
+        },
+        {
+          "datasource": "prometheus",
+          "description": "Akka.NET message throughput by message type.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 12,
+            "x": 12,
+            "y": 51
+          },
+          "id": 21,
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "mean"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true
+          },
+          "pluginVersion": "7.3.7",
+          "targets": [
+            {
+              "expr": "topk(10,sum by(messagetype)(increase(akka_net_akka_messages_recv_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
+              "format": "time_series",
+              "hide": false,
+              "instant": true,
+              "interval": "",
+              "legendFormat": "{{messagetype}}",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Akka.NET Message Totals by Type  (Top 10 over 5 minutes)",
+          "transformations": [],
+          "type": "bargauge"
         }
       ],
-      "refresh": false,
-      "schemaVersion": 16,
+      "refresh": "10s",
+      "schemaVersion": 26,
       "style": "dark",
-      "tags": [],
+      "tags": [
+        "akka.net",
+        "phobos"
+      ],
       "templating": {
-        "list": []
+        "list": [
+          {
+            "allValue": null,
+            "current": {},
+            "datasource": "prometheus",
+            "definition": "label_values(cluster_role)",
+            "error": null,
+            "hide": 0,
+            "includeAll": true,
+            "label": "Role",
+            "multi": true,
+            "name": "role",
+            "options": [],
+            "query": "label_values(cluster_role)",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "allValue": null,
+            "current": {},
+            "datasource": "prometheus",
+            "definition": "label_values(akka_address)",
+            "error": null,
+            "hide": 0,
+            "includeAll": true,
+            "label": "address",
+            "multi": true,
+            "name": "address",
+            "options": [],
+            "query": "label_values(akka_address)",
+            "refresh": 1,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "tagValuesQuery": "",
+            "tags": [],
+            "tagsQuery": "",
+            "type": "query",
+            "useTags": false
+          },
+          {
+            "datasource": null,
+            "error": null,
+            "filters": [],
+            "hide": 0,
+            "label": "",
+            "name": "Filters",
+            "skipUrlSync": false,
+            "type": "adhoc"
+          }
+        ]
       },
       "time": {
         "from": "now-5m",
@@ -1956,9 +2901,9 @@ data:
         ]
       },
       "timezone": "",
-      "title": "Akka.NET Metrics",
-      "uid": "I84lyfiMk",
-      "version": 4
+      "title": "Akka.NET Cluster Metrics",
+      "uid": "8Y4JcEfGk",
+      "version": 7
     }
 ---
 apiVersion: v1
