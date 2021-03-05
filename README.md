@@ -1,6 +1,8 @@
 # Petabridge.Phobos.Web
 _This repository contains the source code for the [Phobos Quickstart Tutorial, which you can read here](https://phobos.petabridge.com/articles/quickstart.html)_.
 
+> NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/13775
+
 This project is a ready-made solution for testing [Phobos](https://phobos.petabridge.com/) in a real production environment using the following technologies:
 
 - .NET Core 3.1
