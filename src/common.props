@@ -18,7 +18,7 @@
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>16.9.1</TestSdkVersion>
-    <AkkaVersion>1.4.16</AkkaVersion>
+    <AkkaVersion>1.4.17</AkkaVersion>
     <PbmVersion>0.8.2</PbmVersion>
     <FluentAssertionsVersion>5.10.3</FluentAssertionsVersion>
     <PhobosVersion>1.1.0</PhobosVersion>
