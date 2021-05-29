@@ -17,7 +17,7 @@
 	<ItemGroup>
 		<PackageReference Include="Akka.Logger.Serilog" Version="1.4.17" />
 		<PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
 		<PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)" />
 		<PackageReference Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)" />
 		<PackageReference Include="Akka.Bootstrap.Docker">
