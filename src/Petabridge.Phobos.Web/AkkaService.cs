@@ -128,7 +128,7 @@ namespace Petabridge.Phobos.Web
             // start https://cmd.petabridge.com/ for diagnostics and profit
             var pbm = PetabridgeCmd.Get(_actors.Sys); // start Pbm
             pbm.RegisterCommandPalette(ClusterCommands.Instance);
-            pbm.RegisterCommandPalette(RemoteCommands.Instance);
+            pbm.RegisterCommandPalette(new RemoteCommands());
             pbm.Start(); // begin listening for PBM management commands
 
             return Task.CompletedTask;
