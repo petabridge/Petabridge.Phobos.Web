@@ -6,150 +6,74 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using System.Net;
+using System.Reflection;
 using Akka.Actor;
 using Akka.Bootstrap.Docker;
 using Akka.Configuration;
-using App.Metrics;
-using App.Metrics.Formatters.Prometheus;
-using Jaeger;
-using Jaeger.Reporters;
-using Jaeger.Samplers;
-using Jaeger.Senders;
-using Jaeger.Senders.Thrift;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenTracing;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Phobos.Actor;
 using Phobos.Actor.Configuration;
-using Phobos.Tracing.Scopes;
 
 namespace Petabridge.Phobos.Web
 {
     public class Startup
     {
-        /// <summary>
-        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
-        ///     output.
-        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
-        /// </summary>
-        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
-
-        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
-
-        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
-
-        public const int DefaultJaegerAgentPort = 6832;
-
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            // enables OpenTracing for ASP.NET Core
-            services.AddOpenTracing(o =>
-            {
-                o.ConfigureAspNetCore(a =>
-                {
-                    a.Hosting.OperationNameResolver = context => $"{context.Request.Method} {context.Request.Path}";
+            // Prometheus exporter won't work without this
+            services.AddControllers();
+            
+            var resource = ResourceBuilder.CreateDefault()
+                .AddService(Assembly.GetEntryAssembly().GetName().Name, serviceInstanceId: $"{Dns.GetHostName()}");
 
-                    // skip Prometheus HTTP /metrics collection from appearing in our tracing system
-                    a.Hosting.IgnorePatterns.Add(x => x.Request.Path.StartsWithSegments(new PathString("/metrics")));
-                });
-                o.ConfigureGenericDiagnostics(c => { });
+            // enables OpenTelemetry for ASP.NET / .NET Core
+            services.AddOpenTelemetryTracing(builder =>
+            {
+                builder
+                    .SetResourceBuilder(resource)
+                    .AddPhobosInstrumentation()
+                    .AddSource("Petabridge.Phobos.Web")
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddJaegerExporter(opt =>
+                    {
+                        
+                    });
             });
 
-            // sets up Prometheus + ASP.NET Core metrics
-            ConfigureAppMetrics(services);
-
-            // sets up Jaeger tracing
-            ConfigureJaegerTracing(services);
+            services.AddOpenTelemetryMetrics(builder =>
+            {
+                builder
+                    .SetResourceBuilder(resource)
+                    .AddPhobosInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddPrometheusExporter(opt =>
+                    {
+                    });
+            });
 
             // sets up Akka.NET
             ConfigureAkka(services);
-        }
-
-
-        public static void ConfigureAppMetrics(IServiceCollection services)
-        {
-            services.AddMetricsTrackingMiddleware();
-            services.AddMetrics(b =>
-            {
-                var metrics = b.Configuration.Configure(o =>
-                    {
-                        o.GlobalTags.Add("host", Dns.GetHostName());
-                        o.DefaultContextLabel = "akka.net";
-                        o.Enabled = true;
-                        o.ReportingEnabled = true;
-                    })
-                    .OutputMetrics.AsPrometheusPlainText()
-                    .Build();
-
-                services.AddMetricsEndpoints(ep =>
-                {
-                    ep.MetricsTextEndpointOutputFormatter = metrics.OutputMetricsFormatters
-                        .OfType<MetricsPrometheusTextOutputFormatter>().First();
-                    ep.MetricsEndpointOutputFormatter = metrics.OutputMetricsFormatters
-                        .OfType<MetricsPrometheusTextOutputFormatter>().First();
-                });
-            });
-            services.AddMetricsReportingHostedService();
-        }
-
-        public static void ConfigureJaegerTracing(IServiceCollection services)
-        {
-            static ISender BuildSender()
-            {
-                if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable(JaegerEndpointEnvironmentVar)))
-                {
-                    if (!int.TryParse(Environment.GetEnvironmentVariable(JaegerAgentPortEnvironmentVar),
-                        out var udpPort))
-                        udpPort = DefaultJaegerAgentPort;
-                    return new UdpSender(
-                        Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost",
-                        udpPort, 0);
-                }
-
-                return new HttpSender(Environment.GetEnvironmentVariable(JaegerEndpointEnvironmentVar));
-            }
-
-            services.AddSingleton<ITracer>(sp =>
-            {
-                var loggerFactory = sp.GetRequiredService<ILoggerFactory>();
-
-                var builder = BuildSender();
-                var logReporter = new LoggingReporter(loggerFactory);
-
-                var remoteReporter = new RemoteReporter.Builder()
-                    .WithLoggerFactory(loggerFactory) // optional, defaults to no logging
-                    .WithMaxQueueSize(100) // optional, defaults to 100
-                    .WithFlushInterval(TimeSpan.FromSeconds(1)) // optional, defaults to TimeSpan.FromSeconds(1)
-                    .WithSender(builder) // optional, defaults to UdpSender("localhost", 6831, 0)
-                    .Build();
-
-                var sampler = new ConstSampler(true); // keep sampling disabled
-
-                // name the service after the executing assembly
-                var tracer = new Tracer.Builder(typeof(Startup).Assembly.GetName().Name)
-                    .WithReporter(new CompositeReporter(remoteReporter, logReporter))
-                    .WithSampler(sampler)
-                    .WithScopeManager(
-                        new ActorScopeManager()); // IMPORTANT: ActorScopeManager needed to properly correlate trace inside Akka.NET
-
-                return tracer.Build();
-            });
         }
 
         public static void ConfigureAkka(IServiceCollection services)
         {
             services.AddSingleton(sp =>
             {
-                var metrics = sp.GetRequiredService<IMetricsRoot>();
-                var tracer = sp.GetRequiredService<ITracer>();
+                var metrics = sp.GetRequiredService<MeterProvider>();
+                var tracer = sp.GetRequiredService<TracerProvider>();
 
                 var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
                     .BootstrapFromDocker()
@@ -179,19 +103,21 @@ namespace Petabridge.Phobos.Web
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
+            // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
             app.UseRouting();
-
-            // enable App.Metrics routes
-            app.UseMetricsAllMiddleware();
-            app.UseMetricsAllEndpoints();
+            app.UseOpenTelemetryPrometheusScrapingEndpoint();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             app.UseEndpoints(endpoints =>
             {
+                var tracer = endpoints.ServiceProvider.GetService<TracerProvider>().GetTracer("Petabridge.Phobos.Web");
                 var actors = endpoints.ServiceProvider.GetService<AkkaActors>();
-                var tracer = endpoints.ServiceProvider.GetService<ITracer>();
                 endpoints.MapGet("/", async context =>
                 {
-                    using (var s = tracer.BuildSpan("Cluster.Ask").StartActive())
+                    using (var s = tracer.StartActiveSpan("Cluster.Ask"))
                     {
                         // router actor will deliver message randomly to someone in cluster
                         var resp = await actors.RouterForwarderActor.Ask<string>($"hit from {context.TraceIdentifier}",
