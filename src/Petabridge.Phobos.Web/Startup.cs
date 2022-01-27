@@ -5,6 +5,7 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -16,7 +17,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -25,6 +26,19 @@ using Phobos.Actor.Configuration;
 
 namespace Petabridge.Phobos.Web
 {
+    public sealed class FilterProcessor : BaseProcessor<Activity>
+    {
+        public override void OnEnd(Activity data)
+        {
+            // filter out unwanted Activities here
+            if (data.OperationName.Contains("/ready"))
+                return;
+            if (data.OperationName.Contains("HTTP POST"))
+                return;
+            base.OnEnd(data);
+        }
+    }
+
     public class Startup
     {
         /// <summary>
@@ -59,6 +73,7 @@ namespace Petabridge.Phobos.Web
                     .AddSource("Petabridge.Phobos.Web")
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
+                    //.AddProcessor(new FilterProcessor())
                     .AddJaegerExporter(opt =>
                     {
                         opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
