@@ -20,7 +20,13 @@
     <TestSdkVersion>17.0.0</TestSdkVersion>
     <AkkaVersion>1.4.32</AkkaVersion>
     <PbmVersion>1.0.2</PbmVersion>
+<<<<<<< HEAD
+    <OTelVersion>1.2.0-rc1</OTelVersion>
     <FluentAssertionsVersion>6.4.0</FluentAssertionsVersion>
+    <PhobosVersion>2.0.0-beta*</PhobosVersion>
+=======
+    <FluentAssertionsVersion>6.2.0</FluentAssertionsVersion>
     <PhobosVersion>1.2.5</PhobosVersion>
+>>>>>>> parent of 09c1fc5 (Upgrade to Phobos 2.0.0-beta1 and OpenTelemetry (#108))
   </PropertyGroup>
 </Project>
