@@ -23,7 +23,7 @@
 		<PackageReference Include="Akka.Bootstrap.Docker">
 			<Version>0.5.3</Version>
 		</PackageReference>
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc8"/>
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9"/>
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8"/>
 		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc8"/>
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)" />
