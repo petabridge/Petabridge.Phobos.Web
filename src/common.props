@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2019-2021 Petabridge</Copyright>
+    <Copyright>Copyright © 2019-2022 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
     <VersionPrefix>0.2.0</VersionPrefix>
     <PackageReleaseNotes>Migrated to Phobos 2.0.0-beta1
