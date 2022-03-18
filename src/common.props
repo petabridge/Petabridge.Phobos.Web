@@ -19,9 +19,9 @@ Migrated to OpenTelemetry</PackageReleaseNotes>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
     <TestSdkVersion>17.0.0</TestSdkVersion>
-    <AkkaVersion>1.4.32</AkkaVersion>
+    <AkkaVersion>1.4.35</AkkaVersion>
     <PbmVersion>1.0.2</PbmVersion>
-    <OTelVersion>1.2.0-rc1</OTelVersion>
+    <OTelVersion>1.2.0-rc3</OTelVersion>
     <FluentAssertionsVersion>6.4.0</FluentAssertionsVersion>
     <PhobosVersion>2.0.0-beta*</PhobosVersion>
   </PropertyGroup>
