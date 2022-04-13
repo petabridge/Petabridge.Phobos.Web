@@ -1,4 +1,4 @@
-#### 0.2.0 January 26 2021 ####
+#### 0.2.4 January 26 2021 ####
 
 * Migrated to Phobos 2.0.0-beta1
 * Migrated to OpenTelemetry
