@@ -1,7 +1,9 @@
 # Petabridge.Phobos.Web
 _This repository contains the source code for the [Phobos Quickstart Tutorial, which you can read here](https://phobos.petabridge.com/articles/quickstart.html)_.
 
-> NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/13775
+> NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html#phobos-2x), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/15637 and here https://grafana.com/grafana/dashboards/15638
+
+> This sample has been updated for [Phobos 2.x and OpenTelemetry](https://phobos.petabridge.com/articles/releases/whats-new-in-phobos-2.0.0.html) - if you need access to the old 1.x version of this sample please see https://github.com/petabridge/Petabridge.Phobos.Web/tree/1.x
 
 This project is a ready-made solution for testing [Phobos](https://phobos.petabridge.com/) in a real production environment using the following technologies:
 
@@ -35,13 +37,13 @@ Once you purchase a [Phobos NuGet keys for your organization](https://phobos.pet
 </configuration>
 ```
 
-From there, run the following commad on the prompt:
+From there, run the following command on the prompt:
 
 ```
 PS> build.cmd Docker
 ```
 
-This will create the Docker images the solution needs to run inside Kubernetes: `petabridge.phobos.web:0.1.0`.
+This will create the Docker images the solution needs to run inside Kubernetes: `petabridge.phobos.web:0.2.4`.
 
 ### Deploying the K8s Cluster (with Telemetry Installed)
 From there, everything you need to run the solution in Kubernetes is already defined inside the [`k8s/` folder](k8s/) - just run the following command to launch the Phobos-enabled application inside Kubernetes:
@@ -95,7 +97,7 @@ Once the cluster is fully up and running you can explore the application and its
 * [http://localhost:1880](http://localhost:1880) - generates traffic across the Akka.NET cluster inside the `phobos-web` service.
 * [http://localhost:16686/](http://localhost:16686/) - Jaeger tracing UI. Allows to explore the traces that are distributed across the different nodes in the cluster.
 * [http://localhost:9090/](http://localhost:9090/) - Prometheus query UI.
-* [http://localhost:3000/](http://localhost:3000/) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + App.Metrics metrics:
+* [http://localhost:3000/](http://localhost:3000/) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + OpenTelemetry metrics:
 	- [Akka.NET Cluster Metrics](http://localhost:3000/d/8Y4JcEfGk/akka-net-cluster-metrics?orgId=1&refresh=10s) - this is a pre-installed version of our [Akka.NET Cluster + Phobos Metrics (Prometheus Data Source) Dashboard](https://grafana.com/grafana/dashboards/13775) on Grafana Cloud, which you can install instantly into your own applications!
 	- [ASP.NET Core Metrics](http://localhost:3000/d/ggsijSPZz/asp-net-core-metrics?orgId=1)
 	- [Kubernetes Cluster Metrics](http://localhost:3000/d/9q974SWGz/kubernetes-pod-resources?orgId=1)
@@ -177,44 +179,3 @@ If you add any new projects to the solution created with this template, be sure 
 ```
 <Import Project="..\common.props" />
 ```
-
-### Conventions
-The attached build script will automatically do the following based on the conventions of the project names added to this project:
-
-* Any project name ending with `.Tests` will automatically be treated as a [XUnit2](https://xunit.github.io/) project and will be included during the test stages of this build script;
-* Any project name ending with `.Tests.Performance` will automatically be treated as a [NBench](https://github.com/petabridge/NBench) project and will be included during the test stages of this build script; and
-* Any project meeting neither of these conventions will be treated as a NuGet packaging target and its `.nupkg` file will automatically be placed in the `bin\nuget` folder upon running the `build.[cmd|sh] all` command.
-
-### DocFx for Documentation
-This solution also supports [DocFx](http://dotnet.github.io/docfx/) for generating both API documentation and articles to describe the behavior, output, and usages of your project. 
-
-All of the relevant articles you wish to write should be added to the `/docs/articles/` folder and any API documentation you might need will also appear there.
-
-All of the documentation will be statically generated and the output will be placed in the `/docs/_site/` folder. 
-
-#### Previewing Documentation
-To preview the documentation for this project, execute the following command at the root of this folder:
-
-```
-C:\> serve-docs.cmd
-```
-
-This will use the built-in `docfx.console` binary that is installed as part of the NuGet restore process from executing any of the usual `build.cmd` or `build.sh` steps to preview the fully-rendered documentation. For best results, do this immediately after calling `build.cmd buildRelease`.
-
-### Code Signing via SignService
-This project uses [SignService](https://github.com/onovotny/SignService) to code-sign NuGet packages prior to publication. The `build.cmd` and `build.sh` scripts will automatically download the `SignClient` needed to execute code signing locally on the build agent, but it's still your responsibility to set up the SignService server per the instructions at the linked repository.
-
-Once you've gone through the ropes of setting up a code-signing server, you'll need to set a few configuration options in your project in order to use the `SignClient`:
-
-* Add your Active Directory settings to [`appsettings.json`](appsettings.json) and
-* Pass in your signature information to the `signingName`, `signingDescription`, and `signingUrl` values inside `build.fsx`.
-
-Whenever you're ready to run code-signing on the NuGet packages published by `build.fsx`, execute the following command:
-
-```
-C:\> build.cmd nuget SignClientSecret={your secret} SignClientUser={your username}
-```
-
-This will invoke the `SignClient` and actually execute code signing against your `.nupkg` files prior to NuGet publication.
-
-If one of these two values isn't provided, the code signing stage will skip itself and simply produce unsigned NuGet code packages.
