@@ -1,9 +1,10 @@
 <Project>
   <PropertyGroup>
-    <Copyright>Copyright © 2019-2021 Petabridge</Copyright>
+    <Copyright>Copyright © 2019-2022 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.1.4</VersionPrefix>
-    <PackageReleaseNotes>First release</PackageReleaseNotes>
+    <VersionPrefix>0.2.4</VersionPrefix>
+    <PackageReleaseNotes>Migrated to Phobos 2.0.0-beta1
+Migrated to OpenTelemetry</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
@@ -17,10 +18,12 @@
     <NetCoreFramework>netcoreapp3.1</NetCoreFramework>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>17.1.0</TestSdkVersion>
-    <AkkaVersion>1.4.36</AkkaVersion>
+    <TestSdkVersion>17.0.0</TestSdkVersion>
+    <AkkaVersion>1.4.35</AkkaVersion>
     <PbmVersion>1.0.2</PbmVersion>
-    <FluentAssertionsVersion>6.6.0</FluentAssertionsVersion>
-    <PhobosVersion>1.4.1</PhobosVersion>
+    <OTelVersion>1.2.0-rc5</OTelVersion>
+    <OTelExporterVersion>1.0.0-rc9.2</OTelExporterVersion>
+    <FluentAssertionsVersion>6.4.0</FluentAssertionsVersion>
+    <PhobosVersion>2.0.1</PhobosVersion>
   </PropertyGroup>
 </Project>
