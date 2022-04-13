@@ -26,7 +26,6 @@ using Petabridge.Cmd.Cluster;
 using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
 using Phobos.Actor;
-using Phobos.Actor.Configuration;
 using Phobos.Hosting;
 
 namespace Petabridge.Phobos.Web
@@ -104,7 +103,7 @@ namespace Petabridge.Phobos.Web
                     .UseSerilog();
 
                 builder.AddHocon(config)
-                    .WithClustering(new ClusterOptions() { Roles = new string[] { "console" } })
+                    .WithClustering(new ClusterOptions { Roles = new[] { "console" } })
                     .WithPhobos(AkkaRunMode.AkkaCluster) // enable Phobos
                     .StartActors((system, registry) =>
                     {

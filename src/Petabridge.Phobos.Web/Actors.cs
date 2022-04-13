@@ -5,19 +5,11 @@
 // -----------------------------------------------------------------------
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
-using Akka.Routing;
+using Akka.Logger.Serilog;
 using Akka.Util;
-using App.Metrics.Timer;
-using Microsoft.Extensions.Hosting;
-using Petabridge.Cmd.Cluster;
-using Petabridge.Cmd.Host;
-using Petabridge.Cmd.Remote;
 using Phobos.Actor;
-using SerilogLogMessageFormatter = Akka.Logger.Serilog.SerilogLogMessageFormatter;
 
 namespace Petabridge.Phobos.Web
 {
@@ -55,20 +47,23 @@ namespace Petabridge.Phobos.Web
 
         public ConsoleActor()
         {
+            var processingTimer = Context.GetInstrumentation().Monitor.CreateHistogram<double>("ProcessingTime", "ms");
             Receive<string>(_ =>
             {
                 // use the local metrics handle to record a timer duration for how long this block of code takes to execute
-                Context.GetInstrumentation().Monitor.Timer.Time(new TimerOptions {Name = "ProcessingTime"}, () =>
-                {
-                    // start another span programmatically inside actor
-                    using (var newSpan = Context.GetInstrumentation().Tracer.BuildSpan("SecondOp").StartActive())
-                    {
-                        var child = Context.ActorOf(Props.Create(() => new ChildActor()));
-                        _log.Info("Spawned {child}", child);
+                var start = DateTime.UtcNow;
 
-                        child.Forward(_);
-                    }
-                });
+                // start another span programmatically inside actor
+                using (var newSpan = Context.GetInstrumentation().Tracer.StartActiveSpan("SecondOp"))
+                {
+                    var child = Context.ActorOf(Props.Create(() => new ChildActor()));
+                    _log.Info("Spawned {child}", child);
+
+                    child.Forward(_);
+                }
+
+                var duration = (DateTime.UtcNow - start).TotalMilliseconds;
+                processingTimer.Record(duration);
             });
         }
     }
