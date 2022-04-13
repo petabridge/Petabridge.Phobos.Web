@@ -16,16 +16,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="Akka.Logger.Serilog" Version="1.4.26" />
-		<PackageReference Include="Phobos.Actor.Cluster" Version="$(PhobosVersion)" />
+		<PackageReference Include="Phobos.Hosting" Version="$(PhobosVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.0" />
 		<PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)" />
 		<PackageReference Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)" />
 		<PackageReference Include="Akka.Bootstrap.Docker">
 			<Version>0.5.3</Version>
 		</PackageReference>
-		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc8"/>
-		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc8"/>
-		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc8"/>
+		<PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelExporterVersion)" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelExporterVersion)" />
+		<PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelExporterVersion)" />
 		<PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)" />
 		<PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="$(OTelVersion)" />
 		<PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />

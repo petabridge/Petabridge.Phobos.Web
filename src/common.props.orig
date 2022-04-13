@@ -22,8 +22,11 @@ Migrated to OpenTelemetry</PackageReleaseNotes>
     <AkkaVersion>1.4.35</AkkaVersion>
     <PbmVersion>1.0.2</PbmVersion>
     <OTelVersion>1.2.0-rc3</OTelVersion>
-    <OTelExporterVersion>1.0.0-rc9.2</OTelExporterVersion>
+<<<<<<< Updated upstream
+=======
+    <OTelExporterVersion>1.2.0-rc3</OTelExporterVersion>
+>>>>>>> Stashed changes
     <FluentAssertionsVersion>6.4.0</FluentAssertionsVersion>
-    <PhobosVersion>2.0.0</PhobosVersion>
+    <PhobosVersion>2.0.0-beta637837416948576552</PhobosVersion>
   </PropertyGroup>
 </Project>

@@ -51,7 +51,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: phobos-web
-        image: petabridge.phobos.web:0.2.0
+        image: petabridge.phobos.web:0.2.4
         lifecycle:
           preStop:
             exec:
