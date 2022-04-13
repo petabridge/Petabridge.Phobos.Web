@@ -63,8 +63,15 @@ namespace Petabridge.Phobos.Web
                     .SetResourceBuilder(resource)
                     .AddPhobosInstrumentation()
                     .AddSource("Petabridge.Phobos.Web")
-                    .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation(options =>
+                    {
+                        // don't trace HTTP output to Seq
+                        options.Filter = httpRequestMessage => !httpRequestMessage.RequestUri.Host.Contains("seq");
+                    })
+                    .AddAspNetCoreInstrumentation(options =>
+                    {
+                        options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
+                    })
                     .AddJaegerExporter(opt =>
                     {
                         opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
