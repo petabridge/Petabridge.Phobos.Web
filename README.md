@@ -98,7 +98,7 @@ Once the cluster is fully up and running you can explore the application and its
 * [http://localhost:16686/](http://localhost:16686/) - Jaeger tracing UI. Allows to explore the traces that are distributed across the different nodes in the cluster.
 * [http://localhost:9090/](http://localhost:9090/) - Prometheus query UI.
 * [http://localhost:3000/](http://localhost:3000/) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + OpenTelemetry metrics:
-	- [Akka.NET Cluster Metrics](http://localhost:3000/d/8Y4JcEfGk/akka-net-cluster-metrics?orgId=1&refresh=10s) - this is a pre-installed version of our [Akka.NET Cluster + Phobos Metrics (Prometheus Data Source) Dashboard](https://grafana.com/grafana/dashboards/13775) on Grafana Cloud, which you can install instantly into your own applications!
+	- [Akka.NET Cluster Metrics](http://localhost:3000/d/8Y4JcEfGk/akka-net-cluster-metrics?orgId=1&refresh=10s) - this is a pre-installed version of our [Akka.NET Cluster + Phobos Metrics (Prometheus Data Source) Dashboard](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html#phobos-2x) on Grafana Cloud, which you can install instantly into your own applications!
 	- [ASP.NET Core Metrics](http://localhost:3000/d/ggsijSPZz/asp-net-core-metrics?orgId=1)
 	- [Kubernetes Cluster Metrics](http://localhost:3000/d/9q974SWGz/kubernetes-pod-resources?orgId=1)
 * [http://localhost:8988/](http://localhost:8988/) - Seq log aggregation.
