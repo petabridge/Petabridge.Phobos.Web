@@ -23,7 +23,7 @@ Migrated to OpenTelemetry</PackageReleaseNotes>
     <PbmVersion>1.0.2</PbmVersion>
     <OTelVersion>1.2.0-rc5</OTelVersion>
     <OTelExporterVersion>1.0.0-rc9.2</OTelExporterVersion>
-    <FluentAssertionsVersion>6.4.0</FluentAssertionsVersion>
+    <FluentAssertionsVersion>6.6.0</FluentAssertionsVersion>
     <PhobosVersion>2.0.1</PhobosVersion>
   </PropertyGroup>
 </Project>
