@@ -1,7 +1,4 @@
-#### 0.2.4 January 26 2021 ####
+#### 0.1.0 April 18 2022 ####
 
-* Migrated to Phobos 2.0.0-beta1
-* Migrated to OpenTelemetry
-
-#### 0.1.3 June 17 2020 ####
-First release
+* Upgraded to OTel
+* Upgraded to Phobos 2.0
