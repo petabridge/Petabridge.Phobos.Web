@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Copyright>Copyright © 2019-2022 Petabridge</Copyright>
     <Authors>Petabridge</Authors>
-    <VersionPrefix>0.2.4</VersionPrefix>
-    <PackageReleaseNotes>Migrated to Phobos 2.0.0-beta1
-Migrated to OpenTelemetry</PackageReleaseNotes>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <PackageReleaseNotes>Upgraded to OTel
+Upgraded to Phobos 2.0</PackageReleaseNotes>
     <PackageIconUrl>
     </PackageIconUrl>
     <PackageProjectUrl>
