@@ -80,9 +80,7 @@ namespace Petabridge.Phobos.Web
             services.AddOpenTelemetryMetrics(builder =>
             {
                 builder
-                    .SetResourceBuilder(ResourceBuilder.CreateDefault()
-                        .AddService(Assembly.GetEntryAssembly().GetName().Name,
-                            serviceInstanceId: $"{Dns.GetHostName()}"))
+                    .SetResourceBuilder(resource)
                     .AddPhobosInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
