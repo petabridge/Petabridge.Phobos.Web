@@ -22,7 +22,7 @@ Upgraded to Phobos 2.0</PackageReleaseNotes>
     <AkkaVersion>1.4.37</AkkaVersion>
     <PbmVersion>1.0.2</PbmVersion>
     <OTelVersion>1.2.0-rc5</OTelVersion>
-    <OTelExporterVersion>1.0.0-rc9.2</OTelExporterVersion>
+    <OTelExporterVersion>1.0.0-rc9.3</OTelExporterVersion>
     <FluentAssertionsVersion>6.6.0</FluentAssertionsVersion>
     <PhobosVersion>2.0.1</PhobosVersion>
   </PropertyGroup>
