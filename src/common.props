@@ -18,7 +18,7 @@ Upgraded to Phobos 2.0</PackageReleaseNotes>
     <NetCoreFramework>net6.0</NetCoreFramework>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.1</XunitVersion>
-    <TestSdkVersion>17.1.0</TestSdkVersion>
+    <TestSdkVersion>17.3.0</TestSdkVersion>
     <AkkaVersion>1.4.39</AkkaVersion>
     <PbmVersion>1.1.0</PbmVersion>
     <OTelVersion>1.2.0-rc5</OTelVersion>
