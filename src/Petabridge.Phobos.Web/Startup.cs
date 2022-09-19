@@ -73,7 +73,7 @@ namespace Petabridge.Phobos.Web
                     })
                     .AddJaegerExporter(opt =>
                     {
-                        opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
+                        opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost";
                     });
             });
 
