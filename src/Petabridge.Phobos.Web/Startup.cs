@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -32,18 +33,7 @@ namespace Petabridge.Phobos.Web
 {
     public class Startup
     {
-        /// <summary>
-        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
-        ///     output.
-        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
-        /// </summary>
-        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
-
-        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
-
-        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
-
-        public const int DefaultJaegerAgentPort = 6832;
+        public const string OtlpEndpointEnv = "OTEL_EXPORTER_OTLP_ENDPOINT";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -71,9 +61,10 @@ namespace Petabridge.Phobos.Web
                     {
                         options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
                     })
-                    .AddJaegerExporter(opt =>
+                    .AddOtlpExporter(options =>
                     {
-                        opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
+                        options.Endpoint = new Uri(Environment.GetEnvironmentVariable(OtlpEndpointEnv));
+                        options.Protocol = OtlpExportProtocol.Grpc;
                     });
             });
 
@@ -84,7 +75,11 @@ namespace Petabridge.Phobos.Web
                     .AddPhobosInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
-                    .AddPrometheusExporter(opt => { });
+                    .AddOtlpExporter(options =>
+                    {
+                        options.Endpoint = new Uri(Environment.GetEnvironmentVariable(OtlpEndpointEnv));
+                        options.Protocol = OtlpExportProtocol.Grpc;
+                    });
             });
 
             // sets up Akka.NET
@@ -127,9 +122,7 @@ namespace Petabridge.Phobos.Web
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
-            // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
             app.UseRouting();
-            app.UseOpenTelemetryPrometheusScrapingEndpoint();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseEndpoints(endpoints =>

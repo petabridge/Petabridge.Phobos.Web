@@ -1,0 +1,26 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+exporters:
+  prometheus:
+    endpoint: :8889
+  jaeger:
+    endpoint: jaeger-all-in-one:14250
+    tls:
+      insecure: true
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]      
+      exporters: [jaeger]
+      processors: [batch]
+    metrics:
+      receivers: [otlp]      
+      exporters: [prometheus]
+      processors: [batch] 
