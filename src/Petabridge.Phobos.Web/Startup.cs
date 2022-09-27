@@ -5,6 +5,8 @@
 // -----------------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -33,6 +35,19 @@ namespace Petabridge.Phobos.Web
 {
     public class Startup
     {
+        /// <summary>
+        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
+        ///     output.
+        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
+        /// </summary>
+        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
+
+        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
+
+        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
+
+        public const int DefaultJaegerAgentPort = 6831;
+
         public const string OtlpEndpointEnv = "OTEL_EXPORTER_OTLP_ENDPOINT";
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -61,20 +76,27 @@ namespace Petabridge.Phobos.Web
                     {
                         options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
                     })
-                    .AddOtlpExporter(options =>
+                    .AddJaegerExporter(opt =>
                     {
-                        options.Endpoint = new Uri(Environment.GetEnvironmentVariable(OtlpEndpointEnv));
-                        options.Protocol = OtlpExportProtocol.Grpc;
+                        opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
                     });
+                    //.AddOtlpExporter(options =>
+                    //{
+                    //    options.Endpoint = new Uri(Environment.GetEnvironmentVariable(OtlpEndpointEnv));
+                    //    options.Protocol = OtlpExportProtocol.Grpc;
+                    //});
             });
 
             services.AddOpenTelemetryMetrics(builder =>
             {
                 builder
                     .SetResourceBuilder(resource)
+                    .AddMeter("Petabridge.Phobos.Web")
                     .AddPhobosInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddAspNetCoreInstrumentation()
+                    .AddConsoleExporter()
+                    .AddPrometheusExporter(opt => { })
                     .AddOtlpExporter(options =>
                     {
                         options.Endpoint = new Uri(Environment.GetEnvironmentVariable(OtlpEndpointEnv));
@@ -117,12 +139,17 @@ namespace Petabridge.Phobos.Web
             });
         }
 
+        private static readonly Meter MyMeter = new Meter("Petabridge.Phobos.Web", "1.0");
+        private static readonly Counter<long> MyFruitCounter = MyMeter.CreateCounter<long>("fruits", "meters", "number of fruits");
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
+            // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
             app.UseRouting();
+            app.UseOpenTelemetryPrometheusScrapingEndpoint();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
             app.UseEndpoints(endpoints =>
@@ -131,6 +158,8 @@ namespace Petabridge.Phobos.Web
                 var actors = endpoints.ServiceProvider.GetService<ActorRegistry>();
                 endpoints.MapGet("/", async context =>
                 {
+                    MyFruitCounter.Add(1, new KeyValuePair<string, object>("name", "apple"), new KeyValuePair<string, object>("color", "red"));
+
                     // fetch actor references from the registry
                     var routerForwarderActor = actors.Get<RouterForwarderActor>();
                     using (var s = tracer.StartActiveSpan("Cluster.Ask"))

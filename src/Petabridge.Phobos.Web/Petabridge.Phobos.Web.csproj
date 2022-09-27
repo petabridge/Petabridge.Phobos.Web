@@ -21,11 +21,14 @@
     <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)"/>
     <PackageReference Include="Akka.Bootstrap.Docker">
       <Version>0.5.3</Version>
-    </PackageReference>
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OTelVersion)" />
+    </PackageReference>   
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelExporterVersion)"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelExporterVersion)"/>
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelExporterVersion)"/>
+    <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)"/>
+    <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="$(OTelVersion)"/>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OTelVersion)" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="$(OTelVersion)" />
     <PackageReference Include="Serilog.AspNetCore" Version="5.0.0"/>
     <PackageReference Include="Serilog.Sinks.Console" Version="4.0.1"/>
     <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1"/>

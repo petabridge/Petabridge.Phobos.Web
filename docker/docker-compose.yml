@@ -15,6 +15,7 @@ services:
       - "16686:16686"
       - "14268:14268"
       - "14250:14250"
+      - "6831:6831/udp"
     networks:
       - phobos-web-network
 
@@ -46,6 +47,7 @@ services:
     container_name: otel-collector
     image: otel/opentelemetry-collector:0.60.0
     command: ["--config=/etc/otel-collector-config.yml", "--feature-gates=pkg.translator.prometheus.NormalizeName"]
+    #command: ["--config=/etc/otel-collector-config.yml"]
     volumes:
       - ./otel-collector-config.yml:/etc/otel-collector-config.yml
     ports:
@@ -83,7 +85,8 @@ services:
       - CLUSTER_PORT=4055
       - CLUSTER_SEEDS=akka.tcp://ClusterSys@phobos-web:4055
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - JAEGER_AGENT_HOST=jaeger-all-in-one
       - SEQ_SERVICE_HOST=seq
       - SEQ_SERVICE_PORT=5341
     networks:
-      - phobos-web-network     
+      - phobos-web-network
