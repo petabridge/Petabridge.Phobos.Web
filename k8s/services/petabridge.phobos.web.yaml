@@ -51,7 +51,7 @@ spec:
       terminationGracePeriodSeconds: 35
       containers:
       - name: phobos-web
-        image: petabridge.phobos.web:0.1.0
+        image: petabridge.phobos.web:0.1.1
         lifecycle:
           preStop:
             exec:
@@ -75,7 +75,7 @@ spec:
         - name: JAEGER_AGENT_HOST
           value: "jaeger-agent"    
         - name: JAEGER_AGENT_PORT
-          value: "6831"
+          value: "6832"
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
         - name: SEQ_SERVICE_HOST 
