@@ -15,7 +15,7 @@ Upgraded to Phobos 2.0.6</PackageReleaseNotes>
   </PropertyGroup>
   <PropertyGroup>
     <LibraryFramework>netstandard2.0</LibraryFramework>
-    <NetCoreFramework>net6.0</NetCoreFramework>
+    <NetCoreFramework>net7.0</NetCoreFramework>
     <NBenchVersion>1.2.2</NBenchVersion>
     <XunitVersion>2.4.2</XunitVersion>
     <TestSdkVersion>17.4.0</TestSdkVersion>
