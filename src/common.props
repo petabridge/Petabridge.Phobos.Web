@@ -23,7 +23,7 @@ Upgraded to Phobos 2.0.6</PackageReleaseNotes>
     <PbmVersion>1.2.1</PbmVersion>
     <OTelVersion>1.3.2</OTelVersion>
     <OTelExporterVersion>1.0.0-rc9.4</OTelExporterVersion>
-    <FluentAssertionsVersion>6.9.0</FluentAssertionsVersion>
+    <FluentAssertionsVersion>6.10.0</FluentAssertionsVersion>
     <PhobosVersion>2.0.6</PhobosVersion>
   </PropertyGroup>
 </Project>
