@@ -100,7 +100,7 @@ namespace Petabridge.Phobos.Web
                     .BootstrapFromDocker()
                     .UseSerilog();
 
-                builder.AddHocon(config)
+                builder.AddHocon(config, HoconAddMode.Append)
                     .WithClustering(new ClusterOptions { Roles = new[] { "console" } })
                     .WithPhobos(AkkaRunMode.AkkaCluster) // enable Phobos
                     .StartActors((system, registry) =>
