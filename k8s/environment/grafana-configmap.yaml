@@ -1227,18 +1227,65 @@ data:
     }
    akkadotnet-dashboard.json: |
     {
-      "__inputs": [{
-        "name": "DS_PROMETHEUS",
-        "label": "prometheus",
-        "description": "",
-        "type": "datasource",
-        "pluginId": "prometheus",
-        "pluginName": "Prometheus"
-      }],
+      "__inputs": [
+        {
+          "name": "DS_PROMETHEUS",
+          "label": "prometheus",
+          "description": "",
+          "type": "datasource",
+          "pluginId": "prometheus",
+          "pluginName": "Prometheus"
+        }
+      ],
+      "__requires": [
+        {
+          "type": "panel",
+          "id": "bargauge",
+          "name": "Bar gauge",
+          "version": ""
+        },
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "8.2.6"
+        },
+        {
+          "type": "panel",
+          "id": "graph",
+          "name": "Graph (old)",
+          "version": ""
+        },
+        {
+          "type": "datasource",
+          "id": "prometheus",
+          "name": "Prometheus",
+          "version": "1.0.0"
+        },
+        {
+          "type": "panel",
+          "id": "stat",
+          "name": "Stat",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "table",
+          "name": "Table",
+          "version": ""
+        },
+        {
+          "type": "panel",
+          "id": "table-old",
+          "name": "Table (old)",
+          "version": ""
+        }
+      ],
       "annotations": {
         "list": [
           {
             "builtIn": 1,
+            "datasource": "prometheus",
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -1249,11 +1296,13 @@ data:
       },
       "description": "System-wide Akka.NET metrics used for profiling Akka.NET performance. Gathered via Phobos and OpenTelemetry.",
       "editable": true,
+      "fiscalYearStartMonth": 0,
       "gnetId": 15637,
       "graphTooltip": 0,
-      "id": 4,
-      "iteration": 1645797823962,
+      "id": null,
+      "iteration": 1675742649384,
       "links": [],
+      "liveNow": false,
       "panels": [
         {
           "collapsed": false,
@@ -1274,7 +1323,6 @@ data:
           "description": "Total number of active Akka.Cluster Members.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1311,9 +1359,10 @@ data:
               "fields": "",
               "values": false
             },
+            "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "ceil(avg(akka_cluster_members_members{status=\"Up\"}))",
@@ -1369,7 +1418,6 @@ data:
           "description": "All nodes in the cluster that are detected to be unreachable.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -1406,9 +1454,10 @@ data:
               "fields": "",
               "values": false
             },
+            "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "ceil(avg(akka_cluster_reachable_members{status=\"False\"}))",
@@ -1430,12 +1479,6 @@ data:
           "dashes": false,
           "datasource": "prometheus",
           "description": "Tracks all nodes by their membership status and reachability.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1462,7 +1505,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "pointradius": 2,
           "points": false,
           "renderer": "flot",
@@ -1547,12 +1590,6 @@ data:
           "dashes": false,
           "datasource": "prometheus",
           "description": "Total aggregate logging activity per-second for each node in an Akka.NET cluster.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1582,7 +1619,7 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
@@ -1665,12 +1702,6 @@ data:
           "columns": [],
           "datasource": "prometheus",
           "description": "Groups all exceptions detected in Akka.NET logs by type.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "fontSize": "100%",
           "gridPos": {
             "h": 9,
@@ -1733,17 +1764,17 @@ data:
           "description": "Total errors logged by Akka.NET over past 5 minutes, cumulative for all roles / cluster / exception types.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [
                 {
-                  "id": 0,
-                  "op": "=",
-                  "text": "N/A",
-                  "type": 1,
-                  "value": "null"
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
                 }
               ],
-              "nullValueMode": "connected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1783,9 +1814,10 @@ data:
               "fields": "",
               "values": false
             },
+            "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "sum(increase(akka_logs_events{level=\"error\",cluster_role=~\"$role\",akka_address=~\"$address\"}[5m]))",
@@ -1812,14 +1844,7 @@ data:
           "id": 2,
           "panels": [],
           "repeat": "role",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
-          "title": "Actor Metrics",
+          "title": "Actor Metrics [$role]",
           "type": "row"
         },
         {
@@ -1829,12 +1854,6 @@ data:
           "dashes": false,
           "datasource": "prometheus",
           "description": "The full set of Akka.NET actors running on all nodes for all roles in a cluster.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {
@@ -1864,26 +1883,20 @@ data:
             "alertThreshold": true
           },
           "percentage": false,
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "pointradius": 5,
           "points": false,
           "renderer": "flot",
           "repeat": null,
           "repeatDirection": "h",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
           "seriesOverrides": [],
           "spaceLength": 10,
           "stack": false,
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(cluster_role,akka_address)(akka_actor_created_starts{cluster_role=~\"$role\",akka_address=~\"$address\"}) - sum by(cluster_role,akka_address)(akka_actor_stopped_stops{cluster_role=~\"$role\",akka_address=~\"$address\"})",
+              "exemplar": true,
+              "expr": "sum by(cluster_role,akka_address)(akka_actor_live_actors{cluster_role=~\"$role\",akka_address=~\"$address\"})",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -1939,17 +1952,17 @@ data:
           "description": "Cumulative Akka.NET messaging throughput across all selected nodes and roles.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [
                 {
-                  "id": 0,
-                  "op": "=",
-                  "text": "N/A",
-                  "type": 1,
-                  "value": "null"
+                  "options": {
+                    "match": "null",
+                    "result": {
+                      "text": "N/A"
+                    }
+                  },
+                  "type": "special"
                 }
               ],
-              "nullValueMode": "connected",
               "thresholds": {
                 "mode": "absolute",
                 "steps": [
@@ -1989,18 +2002,13 @@ data:
               "fields": "",
               "values": false
             },
+            "text": {},
             "textMode": "auto"
           },
-          "pluginVersion": "7.3.7",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
+          "pluginVersion": "8.2.6",
           "targets": [
             {
+              "exemplar": true,
               "expr": "sum(irate(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
               "format": "time_series",
               "instant": false,
@@ -2014,16 +2022,34 @@ data:
           "type": "stat"
         },
         {
-          "columns": [],
           "datasource": "prometheus",
-          "description": "Top 10 actor starts / stops by type.",
+          "description": "All actor counts by type.",
           "fieldConfig": {
             "defaults": {
-              "custom": {}
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
             },
             "overrides": []
           },
-          "fontSize": "100%",
           "gridPos": {
             "h": 9,
             "w": 12,
@@ -2032,89 +2058,56 @@ data:
           },
           "id": 14,
           "links": [],
-          "pageSize": null,
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
+          "options": {
+            "showHeader": true
           },
-          "scroll": true,
-          "showHeader": true,
-          "sort": {
-            "col": 2,
-            "desc": true
-          },
-          "styles": [
-            {
-              "alias": "Time",
-              "align": "auto",
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "link": false,
-              "pattern": "Time",
-              "type": "date"
-            },
-            {
-              "alias": "Created",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "decimals": 2,
-              "pattern": "Value #A",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            },
-            {
-              "alias": "Terminated",
-              "align": "auto",
-              "colorMode": null,
-              "colors": [
-                "rgba(245, 54, 54, 0.9)",
-                "rgba(237, 129, 40, 0.89)",
-                "rgba(50, 172, 45, 0.97)"
-              ],
-              "dateFormat": "YYYY-MM-DD HH:mm:ss",
-              "decimals": 2,
-              "mappingType": 1,
-              "pattern": "Value",
-              "thresholds": [],
-              "type": "number",
-              "unit": "short"
-            }
-          ],
+          "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "topk(10,sum by(actortype)(akka_actor_created_starts{cluster_role=~\"$role\",akka_address=~\"$address\"}))",
+              "exemplar": true,
+              "expr": "topk(10,sum by(actortype)(akka_actor_live_actors{cluster_role=~\"$role\",akka_address=~\"$address\"}))",
               "format": "table",
               "instant": true,
               "interval": "",
               "intervalFactor": 1,
               "legendFormat": "{{actortype}} created",
               "refId": "A"
-            },
-            {
-              "expr": "topk(10,sum by(actortype)(akka_actor_stopped_stops{cluster_role=~\"$role\",akka_address=~\"$address\"}))",
-              "instant": true,
-              "interval": "",
-              "legendFormat": "{{actortype}} terminated",
-              "refId": "B"
             }
           ],
-          "title": "Live Actors by Type (Top 10)",
-          "transform": "table",
+          "title": "Live Actors by Type",
           "transformations": [
             {
               "id": "labelsToFields",
               "options": {}
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true
+                },
+                "indexByName": {},
+                "renameByName": {
+                  "Time": "",
+                  "Value": "Alive",
+                  "actortype": ""
+                }
+              }
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": true,
+                    "field": "Alive"
+                  }
+                ]
+              }
             }
           ],
-          "type": "table-old"
+          "type": "table"
         },
         {
           "datasource": "prometheus",
@@ -2123,6 +2116,7 @@ data:
             "defaults": {
               "custom": {
                 "align": null,
+                "displayMode": "auto",
                 "filterable": false
               },
               "mappings": [],
@@ -2152,14 +2146,7 @@ data:
           "options": {
             "showHeader": true
           },
-          "pluginVersion": "7.3.7",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "topk(10,sum by(actortype, exceptiontype)(rate(akka_actor_restarts_restarts[30m])))",
@@ -2180,7 +2167,6 @@ data:
           "description": "Akka.NET message throughput by message type.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2216,16 +2202,10 @@ data:
               "fields": "",
               "values": false
             },
-            "showUnfilled": true
+            "showUnfilled": true,
+            "text": {}
           },
-          "pluginVersion": "7.3.7",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "topk(10,sum by(messagetype)(rate(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
@@ -2255,7 +2235,6 @@ data:
           "description": "Akka.NET message throughput by message type.",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2291,16 +2270,10 @@ data:
               "fields": "",
               "values": false
             },
-            "showUnfilled": true
+            "showUnfilled": true,
+            "text": {}
           },
-          "pluginVersion": "7.3.7",
-          "scopedVars": {
-            "role": {
-              "selected": false,
-              "text": "console",
-              "value": "console"
-            }
-          },
+          "pluginVersion": "8.2.6",
           "targets": [
             {
               "expr": "topk(10,sum by(messagetype)(increase(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
@@ -2317,10 +2290,145 @@ data:
           "title": "Akka.NET Message Totals by Type  (Top 10 over 5 minutes)",
           "transformations": [],
           "type": "bargauge"
+        },
+        {
+          "collapsed": false,
+          "datasource": null,
+          "gridPos": {
+            "h": 1,
+            "w": 24,
+            "x": 0,
+            "y": 88
+          },
+          "id": 38,
+          "panels": [],
+          "repeat": "shardRegion",
+          "title": "Sharding Statistics [$shardRegion]",
+          "type": "row"
+        },
+        {
+          "datasource": null,
+          "description": "Shows the distribution of $shardRegion shards across all nodes in the cluster.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 89
+          },
+          "id": 56,
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.2.6",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum by(akka_address)(akka_cluster_sharding_shards_shards{region=~\"$shardRegion\"})",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{akka_address}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Shard Distribution [$shardRegion]",
+          "type": "bargauge"
+        },
+        {
+          "datasource": null,
+          "description": "Shows the distribution of $shardRegion entities across all nodes in the cluster. Please note that this number reflects the total number of ALIVE entity actors.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 89
+          },
+          "id": 57,
+          "options": {
+            "displayMode": "gradient",
+            "orientation": "horizontal",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showUnfilled": true,
+            "text": {}
+          },
+          "pluginVersion": "8.2.6",
+          "targets": [
+            {
+              "exemplar": true,
+              "expr": "sum by(akka_address)(akka_cluster_sharding_entities_entities{region=~\"$shardRegion\"})",
+              "hide": false,
+              "instant": false,
+              "interval": "",
+              "legendFormat": "{{akka_address}}",
+              "refId": "A"
+            }
+          ],
+          "title": "Entity Distribution [$shardRegion]",
+          "type": "bargauge"
         }
       ],
       "refresh": "10s",
-      "schemaVersion": 26,
+      "schemaVersion": 32,
       "style": "dark",
       "tags": [
         "akka.net",
@@ -2330,13 +2438,10 @@ data:
         "list": [
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "text": "All",
-              "value": "$__all"
-            },
+            "current": {},
             "datasource": "prometheus",
             "definition": "label_values(cluster_role)",
+            "description": null,
             "error": null,
             "hide": 0,
             "includeAll": true,
@@ -2344,26 +2449,25 @@ data:
             "multi": true,
             "name": "role",
             "options": [],
-            "query": "label_values(cluster_role)",
-            "refresh": 1,
+            "query": {
+              "query": "label_values(cluster_role)",
+              "refId": "prometheus-role-Variable-Query"
+            },
+            "refresh": 2,
             "regex": "",
             "skipUrlSync": false,
             "sort": 0,
             "tagValuesQuery": "",
-            "tags": [],
             "tagsQuery": "",
             "type": "query",
             "useTags": false
           },
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "text": "All",
-              "value": "$__all"
-            },
+            "current": {},
             "datasource": "prometheus",
             "definition": "label_values(akka_address)",
+            "description": null,
             "error": null,
             "hide": 0,
             "includeAll": true,
@@ -2371,19 +2475,45 @@ data:
             "multi": true,
             "name": "address",
             "options": [],
-            "query": "label_values(akka_address)",
-            "refresh": 1,
+            "query": {
+              "query": "label_values(akka_address)",
+              "refId": "prometheus-address-Variable-Query"
+            },
+            "refresh": 2,
             "regex": "",
             "skipUrlSync": false,
             "sort": 0,
             "tagValuesQuery": "",
-            "tags": [],
             "tagsQuery": "",
             "type": "query",
             "useTags": false
           },
           {
+            "allValue": null,
+            "current": {},
+            "datasource": "prometheus",
+            "definition": "label_values(region)",
+            "description": "All of the available shardRegions in the current Akka.NET cluster.",
+            "error": null,
+            "hide": 0,
+            "includeAll": true,
+            "label": "shardRegion",
+            "multi": true,
+            "name": "shardRegion",
+            "options": [],
+            "query": {
+              "query": "label_values(region)",
+              "refId": "StandardVariableQuery"
+            },
+            "refresh": 2,
+            "regex": "",
+            "skipUrlSync": false,
+            "sort": 0,
+            "type": "query"
+          },
+          {
             "datasource": null,
+            "description": null,
             "error": null,
             "filters": [],
             "hide": 0,
@@ -2424,9 +2554,9 @@ data:
         ]
       },
       "timezone": "",
-      "title": "Akka.NET Cluster + Phobos 2.x Metrics (Prometheus Data Source)",
-      "uid": "fxcTFhb7z",
-      "version": 1
+      "title": "Akka.NET Cluster + Phobos 2.1 Metrics (Prometheus Data Source)",
+      "uid": "fm-cB024k",
+      "version": 2
     }
    akkadotnet-latency-dashboard.json: |
      {
