@@ -1,0 +1,47 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <!-- Akka.NET Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Akka.Logger.Serilog" Version="1.4.42" />
+    <PackageVersion Include="Akka.Bootstrap.Docker" Version="0.5.3" />
+  </ItemGroup>
+
+   <!-- Phobos Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Phobos.Hosting" Version="2.0.6"/>
+  </ItemGroup>
+
+  <!-- Petabridge.Cmd Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)"/>
+    <PackageVersion Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)"/>
+  </ItemGroup>
+
+  <!-- OTel Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelExporterVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelExporterVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelExporterVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus" Version="1.2.0-rc5" />
+  </ItemGroup>
+
+  <!-- Serilog Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0"/>
+    <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0"/>
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="5.2.2"/>
+  </ItemGroup>
+
+  <!-- Test Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageVersion Include="xunit" Version="2.4.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageVersion Include="FluentAssertions" Version="6.10.0" />
+    <PackageVersion Include="coverlet.collector" Version="3.2.0" />
+    <PackageVersion Include="Akka.TestKit.XUnit2" Version="1.4.49" />
+  </ItemGroup>
+</Project>

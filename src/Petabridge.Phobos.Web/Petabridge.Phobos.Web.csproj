@@ -1,10 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-    <Import Project="..\common.props"/>
-
     <PropertyGroup>
-        <TargetFramework>$(NetCoreFramework)</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <OutputType>Exe</OutputType>
-        <LangVersion>8</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,21 +11,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Akka.Logger.Serilog" Version="1.4.42"/>
-        <PackageReference Include="Phobos.Hosting" Version="$(PhobosVersion)"/>
-        <PackageReference Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)"/>
-        <PackageReference Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)"/>
-        <PackageReference Include="Akka.Bootstrap.Docker">
-            <Version>0.5.3</Version>
-        </PackageReference>
-        <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelExporterVersion)"/>
-        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelExporterVersion)"/>
-        <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelExporterVersion)"/>
-        <PackageReference Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)"/>
-        <PackageReference Include="OpenTelemetry.Exporter.Prometheus" Version="1.2.0-rc5" />
-        <PackageReference Include="Serilog.AspNetCore" Version="6.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Console" Version="4.1.0"/>
-        <PackageReference Include="Serilog.Sinks.Seq" Version="5.2.2"/>
+        <PackageReference Include="Akka.Logger.Serilog"/>
+        <PackageReference Include="Phobos.Hosting"/>
+        <PackageReference Include="Petabridge.Cmd.Cluster"/>
+        <PackageReference Include="Petabridge.Cmd.Remote"/>
+        <PackageReference Include="Akka.Bootstrap.Docker"/>
+        <PackageReference Include="OpenTelemetry.Extensions.Hosting"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore"/>
+        <PackageReference Include="OpenTelemetry.Instrumentation.Http"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Jaeger"/>
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus"/>
+        <PackageReference Include="Serilog.AspNetCore"/>
+        <PackageReference Include="Serilog.Sinks.Console"/>
+        <PackageReference Include="Serilog.Sinks.Seq"/>
     </ItemGroup>
 
 </Project>
