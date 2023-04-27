@@ -53,39 +53,39 @@ namespace Petabridge.Phobos.Web
             services.AddControllers();
 
             var resource = ResourceBuilder.CreateDefault()
-                .AddService(Assembly.GetEntryAssembly().GetName().Name, serviceInstanceId: $"{Dns.GetHostName()}");
+                .AddService(Assembly.GetEntryAssembly()!.GetName().Name!, serviceInstanceId: $"{Dns.GetHostName()}");
 
             // enables OpenTelemetry for ASP.NET / .NET Core
-            services.AddOpenTelemetryTracing(builder =>
-            {
-                builder
-                    .SetResourceBuilder(resource)
-                    .AddPhobosInstrumentation()
-                    .AddSource("Petabridge.Phobos.Web")
-                    .AddHttpClientInstrumentation(options =>
-                    {
-                        // don't trace HTTP output to Seq
-                        options.Filter = httpRequestMessage => !httpRequestMessage.RequestUri.Host.Contains("seq");
-                    })
-                    .AddAspNetCoreInstrumentation(options =>
-                    {
-                        options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
-                    })
-                    .AddJaegerExporter(opt =>
-                    {
-                        opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost";
-                    });
-            });
-
-            services.AddOpenTelemetryMetrics(builder =>
-            {
-                builder
-                    .SetResourceBuilder(resource)
-                    .AddPhobosInstrumentation()
-                    .AddHttpClientInstrumentation()
-                    .AddAspNetCoreInstrumentation()
-                    .AddPrometheusExporter(opt => { });
-            });
+            services.AddOpenTelemetry()
+                .WithTracing(builder =>
+                {
+                    builder
+                        .SetResourceBuilder(resource)
+                        .AddPhobosInstrumentation()
+                        .AddSource("Petabridge.Phobos.Web")
+                        .AddHttpClientInstrumentation(options =>
+                        {
+                            // don't trace HTTP output to Seq
+                            options.FilterHttpRequestMessage = httpRequestMessage => !httpRequestMessage.RequestUri?.Host.Contains("seq") ?? false;
+                        })
+                        .AddAspNetCoreInstrumentation(options =>
+                        {
+                            options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
+                        })
+                        .AddJaegerExporter(opt =>
+                        {
+                            opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost";
+                        });
+                })
+                .WithMetrics(builder =>
+                {
+                    builder
+                        .SetResourceBuilder(resource)
+                        .AddPhobosInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddAspNetCoreInstrumentation()
+                        .AddPrometheusExporter(_ => { });
+                });
 
             // sets up Akka.NET
             ConfigureAkka(services);
