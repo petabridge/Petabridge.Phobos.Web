@@ -10,7 +10,7 @@
 
    <!-- Phobos Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="Phobos.Hosting" Version="2.2.0"/>
+    <PackageVersion Include="Phobos.Hosting" Version="$(PhobosVersion)"/>
   </ItemGroup>
 
   <!-- Petabridge.Cmd Package Versions -->
@@ -21,11 +21,11 @@
 
   <!-- OTel Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelExporterVersion)"/>
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelExporterVersion)"/>
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelExporterVersion)"/>
-    <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelVersion)"/>
-    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus" Version="1.2.0-rc5" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelInstrumentationVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelInstrumentationVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelExporterVersion)"/>
+    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.4.0-rc.4" />
   </ItemGroup>
 
   <!-- Serilog Package Versions -->
@@ -37,9 +37,9 @@
 
   <!-- Test Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageVersion Include="xunit" Version="2.4.2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
+    <PackageVersion Include="xunit" Version="$(XunitVersion)" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="$(XunitRunnerVersion)" />
     <PackageVersion Include="FluentAssertions" Version="6.11.0" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="Akka.TestKit.XUnit2" Version="1.5.4" />
