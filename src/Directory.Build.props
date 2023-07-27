@@ -21,7 +21,7 @@ Upgraded to Phobos 2.0.6</PackageReleaseNotes>
     <TestSdkVersion>17.6.3</TestSdkVersion>
     <PbmVersion>1.3.2</PbmVersion>
     <OTelVersion>1.4.0</OTelVersion>
-    <OTelExporterVersion>1.4.0</OTelExporterVersion>
+    <OTelExporterVersion>1.5.1</OTelExporterVersion>
     <OTelInstrumentationVersion>1.0.0-rc9.14</OTelInstrumentationVersion>
     <PhobosVersion>2.3.0</PhobosVersion>
   </PropertyGroup>
