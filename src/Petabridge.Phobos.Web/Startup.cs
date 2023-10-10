@@ -32,18 +32,18 @@ namespace Petabridge.Phobos.Web
 {
     public class Startup
     {
-        /// <summary>
-        ///     Name of the <see cref="Environment" /> variable used to direct Phobos' Jaeger
-        ///     output.
-        ///     See https://github.com/jaegertracing/jaeger-client-csharp for details.
-        /// </summary>
-        public const string JaegerAgentHostEnvironmentVar = "JAEGER_AGENT_HOST";
-
-        public const string JaegerEndpointEnvironmentVar = "JAEGER_ENDPOINT";
-
-        public const string JaegerAgentPortEnvironmentVar = "JAEGER_AGENT_PORT";
-
-        public const int DefaultJaegerAgentPort = 6832;
+        // OpenTelemetry.Exporter.OpenTelemetryProtocol exporter supports several environment variables
+        // that can be used to configure the exporter instance:
+        //
+        // * OTEL_EXPORTER_OTLP_ENDPOINT 
+        // * OTEL_EXPORTER_OTLP_HEADERS
+        // * OTEL_EXPORTER_OTLP_TIMEOUT
+        // * OTEL_EXPORTER_OTLP_PROTOCOL
+        //
+        // Please read https://opentelemetry.io/docs/concepts/sdk-configuration/otlp-exporter-configuration/
+        // for further information.
+        //
+        // Note that OTEL_EXPORTER_OTLP_PROTOCOL only supports "grpc" and "http/protobuf"
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -72,10 +72,7 @@ namespace Petabridge.Phobos.Web
                         {
                             options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
                         })
-                        .AddJaegerExporter(opt =>
-                        {
-                            opt.AgentHost = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar) ?? "localhost";
-                        });
+                        .AddOtlpExporter();
                 })
                 .WithMetrics(builder =>
                 {

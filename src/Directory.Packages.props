@@ -21,8 +21,8 @@
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OTelVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OTelInstrumentationVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OTelInstrumentationVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelExporterVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.4.0-rc.4" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OTelVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.6.0-rc.1" />
   </ItemGroup>
   <!-- Serilog Package Versions -->
   <ItemGroup>
