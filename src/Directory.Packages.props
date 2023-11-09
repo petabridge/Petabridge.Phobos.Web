@@ -27,7 +27,7 @@
   <!-- Serilog Package Versions -->
   <ItemGroup>
     <PackageVersion Include="Serilog.AspNetCore" Version="6.1.0" />
-    <PackageVersion Include="Serilog.Sinks.Console" Version="4.1.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="5.2.3" />
   </ItemGroup>
   <!-- Test Package Versions -->
