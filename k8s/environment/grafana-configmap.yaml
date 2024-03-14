@@ -1300,7 +1300,7 @@ data:
       "gnetId": 15637,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1675742649384,
+      "iteration": 1710430141324,
       "links": [],
       "liveNow": false,
       "panels": [
@@ -1365,42 +1365,48 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"Up\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"Up\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "Up",
               "refId": "A"
             },
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"WeaklyUp\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"WeaklyUp\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "WeaklyUp",
               "refId": "B"
             },
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"Joining\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"Joining\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "Joining",
               "refId": "C"
             },
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"Leaving\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"Leaving\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "Leaving",
               "refId": "D"
             },
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"Exiting\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"Exiting\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "Exiting",
               "refId": "E"
             },
             {
-              "expr": "ceil(avg(akka_cluster_members_members{status=\"Down\"}))",
+              "exemplar": true,
+              "expr": "ceil(avg(akka_cluster_members{status=\"Down\"}))",
               "instant": true,
               "interval": "",
               "legendFormat": "Down",
@@ -1460,6 +1466,7 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
+              "exemplar": true,
               "expr": "ceil(avg(akka_cluster_reachable_members{status=\"False\"}))",
               "instant": true,
               "interval": "",
@@ -1515,12 +1522,14 @@ data:
           "steppedLine": true,
           "targets": [
             {
-              "expr": "ceil(avg by(status)(akka_cluster_members_members))",
+              "exemplar": true,
+              "expr": "ceil(avg by(status)(akka_cluster_members))",
               "interval": "",
               "legendFormat": "{{status}}",
               "refId": "A"
             },
             {
+              "exemplar": true,
               "expr": "ceil(avg(akka_cluster_reachable_members{status=\"False\"}))",
               "instant": false,
               "interval": "",
@@ -1648,7 +1657,8 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by(level)(increase(akka_logs_events{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
+              "exemplar": true,
+              "expr": "sum by(level)(increase(akka_logs_events_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -1745,7 +1755,8 @@ data:
           ],
           "targets": [
             {
-              "expr": "sum by(cluster_role,akka_address,exceptiontype)(ceil(increase(akka_logs_events{cluster_role=~\"$role\",akka_address=~\"$address\",exceptiontype=~\".+\"}[5m])))",
+              "exemplar": true,
+              "expr": "sum by(cluster_role,akka_address,exceptiontype)(ceil(increase(akka_logs_events_total{cluster_role=~\"$role\",akka_address=~\"$address\",exceptiontype=~\".+\"}[5m])))",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -1820,7 +1831,8 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "sum(increase(akka_logs_events{level=\"error\",cluster_role=~\"$role\",akka_address=~\"$address\"}[5m]))",
+              "exemplar": true,
+              "expr": "sum(increase(akka_logs_events_total{level=\"error\",cluster_role=~\"$role\",akka_address=~\"$address\"}[5m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -2009,7 +2021,7 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum(irate(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
+              "expr": "sum(irate(akka_messages_recv_msgs_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
               "format": "time_series",
               "instant": false,
               "interval": "",
@@ -2149,7 +2161,8 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "topk(10,sum by(actortype, exceptiontype)(rate(akka_actor_restarts_restarts[30m])))",
+              "exemplar": true,
+              "expr": "topk(10,sum by(actortype, exceptiontype)(rate(akka_actor_restarts_total[30m])))",
               "format": "table",
               "instant": true,
               "interval": "",
@@ -2208,7 +2221,8 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "topk(10,sum by(messagetype)(rate(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
+              "exemplar": true,
+              "expr": "topk(10,sum by(messagetype)(rate(akka_messages_recv_msgs_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
               "hide": false,
               "instant": true,
               "interval": "",
@@ -2216,7 +2230,8 @@ data:
               "refId": "A"
             },
             {
-              "expr": "sum by(messagetype)(irate(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
+              "exemplar": true,
+              "expr": "sum by(messagetype)(irate(akka_messages_recv_msgs_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[1m]))",
               "hide": true,
               "instant": false,
               "interval": "",
@@ -2276,7 +2291,8 @@ data:
           "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "topk(10,sum by(messagetype)(increase(akka_messages_recv_msgs{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
+              "exemplar": true,
+              "expr": "topk(10,sum by(messagetype)(increase(akka_messages_recv_msgs_total{cluster_role=~\"$role\",akka_address=~\"$address\"}[5m])))",
               "format": "time_series",
               "hide": false,
               "instant": true,
@@ -2355,7 +2371,7 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum by(akka_address)(akka_cluster_sharding_shards_shards{region=~\"$shardRegion\"})",
+              "expr": "sum by(akka_address)(akka_cluster_sharding_shards{region=~\"$shardRegion\"})",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -2415,7 +2431,7 @@ data:
           "targets": [
             {
               "exemplar": true,
-              "expr": "sum by(akka_address)(akka_cluster_sharding_entities_entities{region=~\"$shardRegion\"})",
+              "expr": "sum by(akka_address)(akka_cluster_sharding_entities{region=~\"$shardRegion\"})",
               "hide": false,
               "instant": false,
               "interval": "",
@@ -2560,18 +2576,47 @@ data:
     }
    akkadotnet-latency-dashboard.json: |
      {
-      "__inputs": [{
+      "__inputs": [
+        {
           "name": "DS_PROMETHEUS",
           "label": "prometheus",
           "description": "",
           "type": "datasource",
           "pluginId": "prometheus",
           "pluginName": "Prometheus"
-        }],
+        }
+      ],
+      "__requires": [
+        {
+          "type": "panel",
+          "id": "bargauge",
+          "name": "Bar gauge",
+          "version": ""
+        },
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "8.2.6"
+        },
+        {
+          "type": "panel",
+          "id": "heatmap",
+          "name": "Heatmap",
+          "version": ""
+        },
+        {
+          "type": "datasource",
+          "id": "prometheus",
+          "name": "Prometheus",
+          "version": "1.0.0"
+        }
+      ],
       "annotations": {
         "list": [
           {
             "builtIn": 1,
+            "datasource": "prometheus",
             "enable": true,
             "hide": true,
             "iconColor": "rgba(0, 211, 255, 1)",
@@ -2582,11 +2627,13 @@ data:
       },
       "description": "Message-processing latency dashboard for Akka.NET Clusters using Phobos 2.0 and OpenTelemetry.",
       "editable": true,
+      "fiscalYearStartMonth": 0,
       "gnetId": 15638,
       "graphTooltip": 0,
-      "id": 3,
-      "iteration": 1645798543780,
+      "id": null,
+      "iteration": 1710430223367,
       "links": [],
+      "liveNow": false,
       "panels": [
         {
           "collapsed": false,
@@ -2617,26 +2664,6 @@ data:
           "dataFormat": "tsbuckets",
           "datasource": "prometheus",
           "description": "Heatmap of milliseconds of latency by $msgtype",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -2655,7 +2682,8 @@ data:
           "reverseYBuckets": false,
           "targets": [
             {
-              "expr": "sum(increase(akka_messages_latency_ms_bucket{messagetype=~\"$msgtype\"}[$__interval])) by (le)",
+              "exemplar": true,
+              "expr": "sum(increase(akka_messages_latency_milliseconds_bucket{messagetype=~\"$msgtype\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2694,7 +2722,6 @@ data:
           "description": "Heatmap of milliseconds of latency by $msgtype",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2730,12 +2757,14 @@ data:
               "fields": "",
               "values": false
             },
-            "showUnfilled": true
+            "showUnfilled": true,
+            "text": {}
           },
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "sum(akka_messages_latency_ms_bucket{messagetype=~\"$msgtype\"}) by (le)",
+              "exemplar": true,
+              "expr": "sum(akka_messages_latency_milliseconds_bucket{messagetype=~\"$msgtype\"}) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2777,26 +2806,6 @@ data:
           "dataFormat": "tsbuckets",
           "datasource": "prometheus",
           "description": "Heatmap of milliseconds of latency by $actortype / $msgtype",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": []
-          },
           "gridPos": {
             "h": 8,
             "w": 12,
@@ -2815,7 +2824,8 @@ data:
           "reverseYBuckets": false,
           "targets": [
             {
-              "expr": "sum(increase(akka_messages_latency_ms_bucket{messagetype=~\"$msgtype\",actortype=~\"$actortype\"}[$__interval])) by (le)",
+              "exemplar": true,
+              "expr": "sum(increase(akka_messages_latency_milliseconds_bucket{messagetype=~\"$msgtype\",actortype=~\"$actortype\"}[$__interval])) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2854,7 +2864,6 @@ data:
           "description": "Heatmap of milliseconds of latency by $actortype / $msgtype",
           "fieldConfig": {
             "defaults": {
-              "custom": {},
               "mappings": [],
               "thresholds": {
                 "mode": "absolute",
@@ -2890,12 +2899,14 @@ data:
               "fields": "",
               "values": false
             },
-            "showUnfilled": true
+            "showUnfilled": true,
+            "text": {}
           },
-          "pluginVersion": "7.3.7",
+          "pluginVersion": "8.2.6",
           "targets": [
             {
-              "expr": "sum(akka_messages_latency_ms_bucket{messagetype=~\"$msgtype\",actortype=~\"$actortype\"}) by (le)",
+              "exemplar": true,
+              "expr": "sum(akka_messages_latency_milliseconds_bucket{messagetype=~\"$msgtype\",actortype=~\"$actortype\"}) by (le)",
               "format": "heatmap",
               "instant": false,
               "interval": "",
@@ -2910,20 +2921,17 @@ data:
         }
       ],
       "refresh": "10s",
-      "schemaVersion": 26,
+      "schemaVersion": 32,
       "style": "dark",
       "tags": [],
       "templating": {
         "list": [
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "text": "int",
-              "value": "int"
-            },
+            "current": {},
             "datasource": "prometheus",
             "definition": "label_values(messagetype)",
+            "description": null,
             "error": null,
             "hide": 0,
             "includeAll": false,
@@ -2931,26 +2939,25 @@ data:
             "multi": false,
             "name": "msgtype",
             "options": [],
-            "query": "label_values(messagetype)",
+            "query": {
+              "query": "label_values(messagetype)",
+              "refId": "prometheus-msgtype-Variable-Query"
+            },
             "refresh": 2,
             "regex": "",
             "skipUrlSync": false,
             "sort": 0,
             "tagValuesQuery": "",
-            "tags": [],
             "tagsQuery": "",
             "type": "query",
             "useTags": false
           },
           {
             "allValue": null,
-            "current": {
-              "selected": false,
-              "text": "Petabridge.Cmd.Remote.Actors.GlobalStatusActor",
-              "value": "Petabridge.Cmd.Remote.Actors.GlobalStatusActor"
-            },
+            "current": {},
             "datasource": "prometheus",
             "definition": "label_values(actortype)",
+            "description": null,
             "error": null,
             "hide": 0,
             "includeAll": false,
@@ -2958,13 +2965,15 @@ data:
             "multi": false,
             "name": "actortype",
             "options": [],
-            "query": "label_values(actortype)",
+            "query": {
+              "query": "label_values(actortype)",
+              "refId": "prometheus-actortype-Variable-Query"
+            },
             "refresh": 2,
             "regex": "",
             "skipUrlSync": false,
             "sort": 0,
             "tagValuesQuery": "",
-            "tags": [],
             "tagsQuery": "",
             "type": "query",
             "useTags": false
@@ -2977,7 +2986,7 @@ data:
       },
       "timepicker": {},
       "timezone": "",
-      "title": "Akka.NET Cluster + Phobos 2.x Message Latency Metrics (Prometheus Data Source)",
+      "title": "Akka.NET Cluster + Phobos 2.1 Message Latency Metrics (Prometheus Data Source)",
       "uid": "-MOG0hx7z",
       "version": 1
       }

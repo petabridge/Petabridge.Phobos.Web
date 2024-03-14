@@ -15,6 +15,7 @@ spec:
       port: 1880
       protocol: TCP
       targetPort: 80
+  publishNotReadyAddresses: true
   selector:
     app: phobos-web
 ---
