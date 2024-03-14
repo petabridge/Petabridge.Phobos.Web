@@ -6,6 +6,7 @@
   <ItemGroup>
     <PackageVersion Include="Akka.Logger.Serilog" Version="1.5.7" />
     <PackageVersion Include="Akka.Bootstrap.Docker" Version="0.5.3" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.7.0" />
   </ItemGroup>
   <!-- Phobos Package Versions -->
   <ItemGroup>
@@ -19,9 +20,8 @@
   <!-- OTel Package Versions -->
   <ItemGroup>
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.7.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.5.12.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.7.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.7.1" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Jaeger" Version="$(OTelExporterVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.7.0-rc.1" />
   </ItemGroup>
   <!-- Serilog Package Versions -->
