@@ -73,10 +73,10 @@ spec:
             configMapKeyRef:
               name: pb-configs
               key: environment
-        - name: JAEGER_AGENT_HOST
-          value: "jaeger-agent"    
-        - name: JAEGER_AGENT_PORT
-          value: "6832"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://jaeger-collector:4317"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
         - name: JAEGER_SAMPLER_PARAM
           value: "1"
         - name: SEQ_SERVICE_HOST 
