@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -72,7 +73,13 @@ namespace Petabridge.Phobos.Web
                         {
                             options.Filter = context => !context.Request.Path.StartsWithSegments("/metrics");
                         })
-                        .AddOtlpExporter();
+                        .AddOtlpExporter(options =>
+                        {
+                            var endpoint = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
+                            if (endpoint is null) return;
+                            options.Endpoint = new Uri($"http://{endpoint}:4317");
+                            options.Protocol = OtlpExportProtocol.Grpc;
+                        });
                 })
                 .WithMetrics(builder =>
                 {
