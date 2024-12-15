@@ -1,21 +1,9 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS base
 WORKDIR /app
 
-# should be a comma-delimited list
-ENV CLUSTER_SEEDS="[]"
-ENV CLUSTER_IP=""
-ENV CLUSTER_PORT="4055"
-
-# 9110 - Petabridge.Cmd
-# 4053 - Akka.Cluster
-# 8080 - HTTP
-EXPOSE 9110 4055 8080
-
 # Install Petabridge.Cmd client so it can be invoked remotely via
 # Docker or K8s 'exec` commands
 RUN dotnet tool install --global pbm 
-
-# RUN pbm help
 
 COPY ./bin/Release/net8.0/publish/ /app
 
@@ -29,5 +17,15 @@ COPY --from=base /root/.dotnet /root/.dotnet/
 
 # Needed because https://stackoverflow.com/questions/51977474/install-dotnet-core-tool-dockerfile
 ENV PATH="${PATH}:/root/.dotnet/tools"
+
+# should be a comma-delimited list
+ENV CLUSTER_SEEDS="[]"
+ENV CLUSTER_IP=""
+ENV CLUSTER_PORT="4055"
+
+# 9110 - Petabridge.Cmd
+# 4053 - Akka.Cluster
+# 8080 - HTTP
+EXPOSE 9110 4055 8080
 
 CMD ["dotnet", "Petabridge.Phobos.Web.dll"]

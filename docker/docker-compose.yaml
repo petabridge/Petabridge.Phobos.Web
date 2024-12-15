@@ -96,7 +96,7 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entryPoints.web.address=:80"
     ports:
-      - "80:80"  # Traefik HTTP
+      - "1080:80"  # Traefik HTTP
       - "8080:8080"  # Traefik Dashboard
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
