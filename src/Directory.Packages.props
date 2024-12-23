@@ -5,12 +5,10 @@
   <!-- Akka.NET Package Versions -->
   <ItemGroup>
     <PackageVersion Include="Akka.Logger.Serilog" Version="1.5.25" />
-    <PackageVersion Include="Akka.Bootstrap.Docker" Version="0.5.3" />
-    
   </ItemGroup>
   <!-- Phobos Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="Phobos.Hosting" Version="2.5.1" />
+    <PackageVersion Include="Phobos.Hosting" Version="2.6.2" />
   </ItemGroup>
   <!-- Petabridge.Cmd Package Versions -->
   <ItemGroup>

@@ -2,7 +2,16 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <EnableSdkContainerSupport>true</EnableSdkContainerSupport>
+        <ContainerRepository>petabridge.phobos.web</ContainerRepository>
+        <ContainerTitle>phobos-web</ContainerTitle>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
+
+    <ItemGroup>
+        <ContainerPort Include="8080" Type="tcp" />
+        <ContainerPort Include="4055" Type="tcp" />
+    </ItemGroup>
 
     <ItemGroup>
         <Content Include="app.conf">

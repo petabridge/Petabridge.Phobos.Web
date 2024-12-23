@@ -3,8 +3,6 @@ _This repository contains the source code for the [Phobos Quickstart Tutorial, w
 
 > NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html#phobos-2x), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/15637 and here https://grafana.com/grafana/dashboards/15638
 
-> This sample has been updated for [Phobos 2.x and OpenTelemetry](https://phobos.petabridge.com/articles/releases/whats-new-in-phobos-2.0.0.html) - if you need access to the old 1.x version of this sample please see https://github.com/petabridge/Petabridge.Phobos.Web/tree/1.x
-
 This project is a ready-made solution for testing [Phobos](https://phobos.petabridge.com/) in a real production environment using the following technologies:
 
 - .NET 8.0
@@ -23,7 +21,7 @@ Next - to build this solution you will need to [purchase a Phobos license key](h
 
 Once you purchase a [Phobos NuGet keys for your organization](https://phobos.petabridge.com/articles/setup/index.html), you're going to want to open [`NuGet.config`](NuGet.config) and add your key:
 
-```
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <solution>
@@ -39,8 +37,8 @@ Once you purchase a [Phobos NuGet keys for your organization](https://phobos.pet
 
 From there, run the following command on the prompt:
 
-```
-PS> build.cmd Docker
+```shell
+dotnet publish --os linux --arch x64 -c Release /t:PublishContainer
 ```
 
 This will create the Docker images the solution needs to run inside Kubernetes: `petabridge.phobos.web:0.2.4`.
