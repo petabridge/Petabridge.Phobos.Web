@@ -5,7 +5,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
     prometheus.io/path: '/metrics'
-    prometheus.io/port: '80'
+    prometheus.io/port: '8080'
   labels:
     app: domain-customers
 spec:
@@ -14,7 +14,7 @@ spec:
     - name: query-http
       port: 1880
       protocol: TCP
-      targetPort: 80
+      targetPort: 8080
   publishNotReadyAddresses: true
   selector:
     app: phobos-web
@@ -89,9 +89,9 @@ spec:
         readinessProbe:
           httpGet:
             path: "/"
-            port: 80
+            port: 8080
         ports:
         - containerPort: 4055
           protocol: TCP
-        - containerPort: 80
+        - containerPort: 8080
           protocol: TCP

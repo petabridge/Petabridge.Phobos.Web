@@ -75,9 +75,9 @@ namespace Petabridge.Phobos.Web
                         })
                         .AddOtlpExporter(options =>
                         {
-                            var endpoint = Environment.GetEnvironmentVariable(JaegerAgentHostEnvironmentVar);
+                            var endpoint = Environment.GetEnvironmentVariable("OTEL_EXPORTER_OTLP_ENDPOINT");
                             if (endpoint is null) return;
-                            options.Endpoint = new Uri($"http://{endpoint}:4317");
+                            options.Endpoint = new Uri(endpoint);
                             options.Protocol = OtlpExportProtocol.Grpc;
                         });
                 })

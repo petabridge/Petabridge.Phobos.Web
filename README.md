@@ -7,8 +7,8 @@ _This repository contains the source code for the [Phobos Quickstart Tutorial, w
 
 This project is a ready-made solution for testing [Phobos](https://phobos.petabridge.com/) in a real production environment using the following technologies:
 
-- .NET 6.0
-- ASP.NET Core 6.0
+- .NET 8.0
+- ASP.NET Core 8.0
 - [Akka.Cluster](https://getakka.net/)
 - [Prometheus](https://prometheus.io/)
 - [Jaeger Tracing](https://www.jaegertracing.io/)
