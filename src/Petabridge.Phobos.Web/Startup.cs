@@ -9,7 +9,6 @@ using System.IO;
 using System.Net;
 using System.Reflection;
 using Akka.Actor;
-using Akka.Bootstrap.Docker;
 using Akka.Cluster.Hosting;
 using Akka.Configuration;
 using Akka.Hosting;
@@ -99,12 +98,7 @@ namespace Petabridge.Phobos.Web
         {
             services.AddAkka("ClusterSys", (builder, provider) =>
             {
-                // use our legacy app.conf file
-                var config = ConfigurationFactory.ParseString(File.ReadAllText("app.conf"))
-                    .BootstrapFromDocker()
-                    .UseSerilog();
-
-                builder.AddHocon(config, HoconAddMode.Append)
+                builder.AddHoconFile("app.conf", HoconAddMode.Append)
                     .WithClustering(new ClusterOptions { Roles = new[] { "console" } })
                     .WithPhobos(AkkaRunMode.AkkaCluster) // enable Phobos
                     .StartActors((system, registry) =>
