@@ -2,28 +2,28 @@
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
+        <LangVersion>12</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="app.conf">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Akka.Logger.Serilog" />
-        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+        <PackageReference Include="Akka.Cluster.Hosting" />
+        <PackageReference Include="Akka.Discovery.Azure" />
+        <PackageReference Include="Akka.Management" />
         <PackageReference Include="Phobos.Hosting" />
         <PackageReference Include="Petabridge.Cmd.Cluster" />
         <PackageReference Include="Petabridge.Cmd.Remote" />
-        <PackageReference Include="Akka.Bootstrap.Docker" />
+        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
+      
+        <!-- Aspire dependencies -->
+        <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+        <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" />
+        <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
         <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
         <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
-        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
-        <PackageReference Include="Serilog.AspNetCore" />
-        <PackageReference Include="Serilog.Sinks.Console" />
-        <PackageReference Include="Serilog.Sinks.Seq" />
+        <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+        <PackageReference Include="Aspire.Seq" />
+      
     </ItemGroup>
 
 </Project>

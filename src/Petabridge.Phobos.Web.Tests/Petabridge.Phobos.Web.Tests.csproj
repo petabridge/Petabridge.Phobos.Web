@@ -8,7 +8,6 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio"/>
     <PackageReference Include="Akka.TestKit.XUnit2"/>
-    <PackageReference Include="FluentAssertions" />
   </ItemGroup>
 
   <ItemGroup>
