@@ -13,7 +13,7 @@
   </ItemGroup>
   <!-- Phobos Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="Phobos.Hosting" Version="2.5.1" />
+    <PackageVersion Include="Phobos.Hosting" Version="2.9.1" />
   </ItemGroup>
   <!-- Petabridge.Cmd Package Versions -->
   <ItemGroup>
