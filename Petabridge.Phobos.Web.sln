@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{79D71264
 		src\Directory.Build.props = src\Directory.Build.props
 		src\Directory.Packages.props = src\Directory.Packages.props
 		NuGet.config = NuGet.config
+		README.md = README.md
+		RELEASE_NOTES.md = RELEASE_NOTES.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Petabridge.Phobos.Web", "src\Petabridge.Phobos.Web\Petabridge.Phobos.Web.csproj", "{6186C854-8B2C-4102-8D7A-4B74A61CC91F}"

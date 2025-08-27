@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <OutputType>Exe</OutputType>
         <LangVersion>12</LangVersion>
     </PropertyGroup>
@@ -12,8 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-      
         <PackageReference Include="Akka.Cluster.Hosting" />
         <PackageReference Include="Akka.Discovery.Azure" />
         <PackageReference Include="Akka.Logger.Serilog" />
