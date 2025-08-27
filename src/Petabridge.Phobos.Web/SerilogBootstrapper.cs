@@ -8,6 +8,8 @@ using System;
 using System.Net;
 using System.Reflection;
 using Akka.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -17,104 +19,76 @@ using Serilog.Sinks.SystemConsole.Themes;
 namespace Petabridge.Phobos.Web
 {
     /// <summary>
-    ///     Used to help load our Seq configuration in at application startup.
-    ///     https://docs.datalust.co/docs/getting-started-with-docker
-    /// </summary>
-    public static class SeqBootstrapper
-    {
-        public const string SEQ_SERVICE_HOST = "SEQ_SERVICE_HOST";
-        public const string SEQ_SERVICE_PORT = "SEQ_SERVICE_PORT";
-
-        public const string DefaultSeqUrl = "http://localhost:5341";
-
-        /// <summary>
-        ///     Checks to see if the <see cref="SEQ_SERVICE_HOST" /> and <see cref="SEQ_SERVICE_PORT" /> environment variables are
-        ///     defined.
-        /// </summary>
-        public static bool SeqEnabled =>
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(SEQ_SERVICE_HOST)) &&
-            !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(SEQ_SERVICE_PORT));
-
-        public static string LoadSeqUrl()
-        {
-            if (SeqEnabled)
-                return
-                    $"http://{Environment.GetEnvironmentVariable(SEQ_SERVICE_HOST)}:{Environment.GetEnvironmentVariable(SEQ_SERVICE_PORT)}";
-
-            // if the environment variables weren't present, return the default Seq url.
-
-            return DefaultSeqUrl;
-        }
-
-        public static string GetServiceName()
-        {
-            var podName = Environment.GetEnvironmentVariable(SerilogBootstrapper.PodNameProperty);
-
-            return !string.IsNullOrEmpty(podName) ? podName : Dns.GetHostName();
-        }
-
-        public static string GetEnvironmentName()
-        {
-            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-
-            return !string.IsNullOrEmpty(environmentName) ? environmentName : "Development";
-        }
-    }
-
-    /// <summary>
     ///     Used to configure and install Serilog for semantic logging for both
     ///     ASP.NET and Akka.NET
     /// </summary>
     public static class SerilogBootstrapper
     {
-        public const string ServiceNameProperty = "SERVICE_NAME";
-        public const string PodNameProperty = "POD_NAME";
-        public const string EnvironmentProperty = "ENVIRONMENT";
+        private const string ServiceNameProperty = "SERVICE_NAME";
+        private const string ReplicaNameProperty = "REPLICA_NAME";
+        private const string EnvironmentProperty = "ENVIRONMENT";
 
         public static readonly Config SerilogConfig =
             @"akka.loggers =[""Akka.Logger.Serilog.SerilogLogger, Akka.Logger.Serilog""]";
 
         static SerilogBootstrapper()
         {
+        }
+
+        public static WebApplicationBuilder ConfigureSerilogLogging(this WebApplicationBuilder b)
+        {
             var loggerConfiguration = new LoggerConfiguration()
                 .Enrich.FromLogContext()
-                .Enrich.WithProperty(PodNameProperty, SeqBootstrapper.GetServiceName())
-                .Enrich.WithProperty(EnvironmentProperty, SeqBootstrapper.GetEnvironmentName())
+                .Enrich.WithProperty(ReplicaNameProperty, GetServiceName(b.Configuration))
+                .Enrich.WithProperty(EnvironmentProperty, b.Environment.EnvironmentName)
                 .Enrich.WithProperty(ServiceNameProperty, Assembly.GetEntryAssembly()?.GetName().Name)
                 .WriteTo.Console(
                     outputTemplate:
-                    "[{POD_NAME}][{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
+                    "[{REPLICA_NAME}][{Timestamp:HH:mm:ss} {Level}] {SourceContext}{NewLine}{Message:lj}{NewLine}{Exception}{NewLine}",
                     theme: AnsiConsoleTheme.Literate)
                 .Filter.ByExcluding(HealthChecksNormalEvents); // Do not want lots of health check info logs in console
-
-            if (SeqBootstrapper.SeqEnabled)
-                // enable Seq
+                
+            var seqConnectionString = b.Configuration.GetConnectionString("seq");
+                
+            // enable Seq, if available
+            if(!string.IsNullOrEmpty(seqConnectionString))
                 loggerConfiguration = loggerConfiguration
-                    .WriteTo.Seq(SeqBootstrapper.LoadSeqUrl())
+                    .WriteTo.Seq(seqConnectionString)
                     .Filter.ByExcluding(HealthChecksNormalEvents); // Do not want lots of health check info logs in Seq
 
             // Configure Serilog
             Log.Logger = loggerConfiguration.CreateLogger();
+            
+            b.Logging.ClearProviders();
+            b.Logging.AddConsole();
+            b.Logging.AddSerilog();
+            b.Logging.AddEventSourceLogger();
+
+            return b;
         }
 
-        public static IHostBuilder ConfigureSerilogLogging(this IHostBuilder b)
+        private static string GetServiceName(IConfiguration configuration)
         {
-            return b.ConfigureLogging((hostingContext, logging) =>
+            var serviceName = configuration.GetValue<string>("OTEL_SERVICE_NAME");
+
+            string instanceId = null;
+            
+            var resourceAttributes = configuration.GetValue<string>("OTEL_RESOURCE_ATTRIBUTES");
+            if (resourceAttributes is not null)
             {
-                logging.ClearProviders();
-                logging.AddConsole();
-                logging.AddSerilog();
-                logging.AddEventSourceLogger();
-            });
-        }
+                var attributes = resourceAttributes.Split('=', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                var index = Array.IndexOf(attributes, "service.instance.id");
+                if(index != -1 && index < attributes.Length - 2)
+                    instanceId = attributes[index + 1];
+            }
 
-        /// <summary>
-        ///     Inject the HOCON configuration needed to run Serilog.
-        /// </summary>
-        /// <param name="c">The input configuration.</param>
-        public static Config UseSerilog(this Config c)
-        {
-            return c.WithFallback(SerilogConfig);
+            if (serviceName is not null && instanceId is not null)
+                return $"{serviceName}-{instanceId}";
+            if (serviceName is not null)
+                return serviceName;
+            if (instanceId is not null)
+                return instanceId;
+            return Dns.GetHostName();
         }
 
         private static bool HealthChecksNormalEvents(LogEvent ev)

@@ -4,9 +4,12 @@
   </PropertyGroup>
   <!-- Akka.NET Package Versions -->
   <ItemGroup>
+    <PackageVersion Include="Akka.Cluster.Hosting" Version="1.5.48" />
+    <PackageVersion Include="Akka.Discovery.Azure" Version="1.5.45.1" />
     <PackageVersion Include="Akka.Logger.Serilog" Version="1.5.25" />
-    <PackageVersion Include="Akka.Bootstrap.Docker" Version="0.5.3" />
-    
+    <PackageVersion Include="Akka.Management" Version="1.5.45.1" />
+    <PackageVersion Include="Aspire.Hosting.Seq" Version="9.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.1" />
   </ItemGroup>
   <!-- Phobos Package Versions -->
   <ItemGroup>
@@ -19,11 +22,19 @@
   </ItemGroup>
   <!-- OTel Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.10.1" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.10.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.10.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.7.0-rc.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
+  </ItemGroup>
+  <!-- Aspire Package Versions -->
+  <ItemGroup>
+    <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.7.0" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.1" />
   </ItemGroup>
   <!-- Serilog Package Versions -->
   <ItemGroup>
@@ -36,7 +47,6 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit" Version="$(XunitVersion)" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="$(XunitRunnerVersion)" />
-    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
     <PackageVersion Include="Akka.TestKit.XUnit2" Version="1.5.32" />
   </ItemGroup>
