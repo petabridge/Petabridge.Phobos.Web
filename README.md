@@ -11,9 +11,10 @@ This project is a ready-made solution for testing [Phobos](https://phobos.petabr
 - ASP.NET Core 8.0
 - [Akka.Cluster](https://getakka.net/)
 - [Prometheus](https://prometheus.io/)
-- [Jaeger Tracing](https://www.jaegertracing.io/)
 - [Grafana](https://grafana.com/)
 - [Docker](https://www.docker.com/)
+- [Seq](https://datalust.co/)
+- [Azure Table](https://learn.microsoft.com/en-us/azure/storage/tables/)
 - and finally, [.NET Aspire](https://github.com/dotnet/aspire)
 
 ## Build and Local Deployment
@@ -53,14 +54,14 @@ Once the project is running, you can manually open the Aspire dashboard [here](h
 
 ## Aspire Dashboard
 
-Once the cluster is fully up and running you can explore the application and its associated telemetry via the Aspire dashboard:
+Once the cluster is fully up and running you can explore the application and its associated telemetry via the Aspire dashboard or by opening these URLs:
 
-* __phobos-web-*__ - Akka cluster nodes, generates traffic across the Akka.NET cluster inside the `phobos-web` service.
-* __prometheus__ - Prometheus query UI.
-* __grafana__ - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + OpenTelemetry metrics:
+* [Akka sample node](http://localhost:1880) - generates traffic across the Akka.NET cluster inside the `phobos-web` service.
+* [Prometheus](http://localhost:9090) - Prometheus query UI.
+* [Grafana](http://localhost:3000) - Grafana metrics. Log in using the username **admin** and the password **admin**. It includes some ready-made dashboards you can use to explore Phobos + OpenTelemetry metrics:
 	- [Akka.NET Cluster Metrics](http://localhost:3000/d/8Y4JcEfGk/akka-net-cluster-metrics?orgId=1&refresh=10s) - this is a pre-installed version of our [Akka.NET Cluster + Phobos Metrics (Prometheus Data Source) Dashboard](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html#phobos-2x) on Grafana Cloud, which you can install instantly into your own applications!
 	- [ASP.NET Core Metrics](http://localhost:3000/d/ggsijSPZz/asp-net-core-metrics?orgId=1)
-* __seq__ - Seq log aggregation.
+* [Seq](http://localhost:8988) - Seq log aggregation.
 
 There's many more metrics exported by Phobos that you can use to create your own dashboards or extend the existing ones - you can view all of them by going to [http://localhost:1880/metrics](http://localhost:1880/metrics)
 

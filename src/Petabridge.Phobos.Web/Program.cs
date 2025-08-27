@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Petabridge.Cmd.Cluster;
@@ -27,6 +28,7 @@ using Petabridge.Cmd.Host;
 using Petabridge.Cmd.Remote;
 using Phobos.Actor;
 using Phobos.Hosting;
+using LogLevel = Akka.Event.LogLevel;
 
 namespace Petabridge.Phobos.Web;
 
@@ -40,10 +42,14 @@ public class Program
     private static WebApplication CreateHostBuilder(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args)
-            .AddServiceDefaults()
-            .ConfigureSerilogLogging();
-            
+            .AddServiceDefaults();
+        
+        builder.Logging.ClearProviders();
+        builder.Logging.AddConsole();
+        builder.Logging.AddEventSourceLogger();
+        
         ConfigureServices(builder.Services);
+        builder.AddSeqEndpoint(connectionName: "seq");
 
         var app = builder.Build();
         Configure(app, app.Environment);
@@ -106,7 +112,12 @@ public class Program
             akkaOptions.Discovery.Port = akkaOptions.Management.Port ?? akkaOptions.Management.BindPort;
             
             builder
-                .AddHocon(SerilogBootstrapper.SerilogConfig, HoconAddMode.Append)
+                .ConfigureLoggers(logger =>
+                {
+                    logger.LogLevel = LogLevel.InfoLevel;
+                    logger.ClearLoggers();
+                    logger.AddLoggerFactory();
+                })
                 .WithRemoting(akkaOptions.Remote)
                 .WithClustering(akkaOptions.Cluster)
                 .WithAkkaManagement(akkaOptions.Management)
@@ -145,7 +156,8 @@ public class Program
 
     public static void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
+        if (env.IsDevelopment()) 
+            app.UseDeveloperExceptionPage();
 
         // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
         app.UseRouting();

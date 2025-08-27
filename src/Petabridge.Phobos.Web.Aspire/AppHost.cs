@@ -5,12 +5,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 #region Logging Setup
 
-var seq = builder.AddSeq("seq")
+var seq = builder.AddSeq("seq", 8988);
     // Uncomment to have Seq persisted between sessions
     // .ExcludeFromManifest()
     // .WithDataVolume()
-    // .WithLifetime(ContainerLifetime.Persistent)
-    .WithEnvironment("ACCEPT_EULA", "Y");
+    // .WithLifetime(ContainerLifetime.Persistent);
 
 #endregion
 
@@ -19,15 +18,16 @@ var seq = builder.AddSeq("seq")
 var prometheus = builder.AddContainer("prometheus", "prom/prometheus", "v3.2.1")
     .WithBindMount("./prometheus", "/etc/prometheus", isReadOnly: true)
     .WithArgs("--web.enable-otlp-receiver", "--config.file=/etc/prometheus/prometheus.yaml")
-    .WithHttpEndpoint(targetPort: 9090, name: "http");
+    .WithHttpEndpoint(port: 9090, targetPort: 9090, name: "http");
 
 var grafana = builder.AddContainer("grafana", "grafana/grafana")
     .WithBindMount("./grafana/config", "/etc/grafana", isReadOnly: true)
     .WithBindMount("./grafana/dashboards", "/var/lib/grafana/dashboards", isReadOnly: true)
     .WithEnvironment("PROMETHEUS_ENDPOINT", prometheus.GetEndpoint("http"))
-    .WithHttpEndpoint(targetPort: 3000, name: "http");
+    .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http");
 
 builder.AddOpenTelemetryCollector("otelcollector", "./otel_collector/config.yaml")
+    .WithEnvironment("SEQ_ENDPOINT", $"{prometheus.GetEndpoint("http")}/ingest/otlp")
     .WithEnvironment("PROMETHEUS_ENDPOINT", $"{prometheus.GetEndpoint("http")}/api/v1/otlp");
 
 #endregion
@@ -44,8 +44,8 @@ var azureTables = azure.AddTables("azure-tables");
 #endregion
 
 builder.AddProject<Projects.Petabridge_Phobos_Web>("phobos-web")
-    .WithHttpsEndpoint()
-    .WithHttpEndpoint()
+    .WithHttpsEndpoint(port: 1881)
+    .WithHttpEndpoint(port: 1880)
     .WithEndpoint(name: "remoting", env: "AkkaOptions__Remote__Port")
     .WithEndpoint(name:"management", env: "AkkaOptions__Management__Port")
     .WithEndpoint(name: "pbm", env: "AkkaOptions__Pbm__Port")
