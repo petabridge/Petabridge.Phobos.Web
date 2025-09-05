@@ -83,14 +83,13 @@ public class Program
             .WithTracing(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation()
+                    .AddPhobosInstrumentation() // enables Phobos tracing instrumentation
                     .AddSource("Petabridge.Phobos.Web");
             })
             .WithMetrics(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation()
-                    .AddPrometheusExporter(_ => { });
+                    .AddPhobosInstrumentation(); // enables Phobos metrics instrumentation
             });
 
         // sets up Akka.NET
@@ -158,10 +157,8 @@ public class Program
     {
         if (env.IsDevelopment()) 
             app.UseDeveloperExceptionPage();
-
-        // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
+        
         app.UseRouting();
-        app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.UseEndpoints(endpoints =>
