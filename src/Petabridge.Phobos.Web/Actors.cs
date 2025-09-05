@@ -10,7 +10,7 @@ using Akka.Event;
 using Akka.Util;
 using Phobos.Actor;
 
-namespace Petabridge.Phobos.Web;
+namespace DemoPhobos;
 
 public sealed class ChildActor : ReceiveActor
 {

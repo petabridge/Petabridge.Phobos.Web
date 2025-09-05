@@ -5,7 +5,7 @@ using Akka.Management.Cluster.Bootstrap;
 using Akka.Remote.Hosting;
 using Petabridge.Cmd.Host;
 
-namespace Petabridge.Phobos.Web;
+namespace DemoPhobos;
 
 public class AkkaOptions
 {
