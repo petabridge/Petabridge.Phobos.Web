@@ -30,7 +30,7 @@ using Phobos.Actor;
 using Phobos.Hosting;
 using LogLevel = Akka.Event.LogLevel;
 
-namespace Petabridge.Phobos.Web;
+namespace DemoPhobos;
 
 public class Program
 {
@@ -77,20 +77,22 @@ public class Program
     {
         // Prometheus exporter won't work without this
         services.AddControllers();
+        
+        // add background service
+        services.AddHostedService<PeriodicMessageService>();
 
         // enables OpenTelemetry for ASP.NET / .NET Core
         services.AddOpenTelemetry()
             .WithTracing(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation()
+                    .AddPhobosInstrumentation() // enables Phobos tracing instrumentation
                     .AddSource("Petabridge.Phobos.Web");
             })
             .WithMetrics(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation()
-                    .AddPrometheusExporter(_ => { });
+                    .AddPhobosInstrumentation(); // enables Phobos metrics instrumentation
             });
 
         // sets up Akka.NET
@@ -158,10 +160,8 @@ public class Program
     {
         if (env.IsDevelopment()) 
             app.UseDeveloperExceptionPage();
-
-        // per https://github.com/open-telemetry/opentelemetry-dotnet/blob/main/src/OpenTelemetry.Exporter.Prometheus/README.md
+        
         app.UseRouting();
-        app.UseOpenTelemetryPrometheusScrapingEndpoint();
         app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.UseEndpoints(endpoints =>
@@ -171,7 +171,7 @@ public class Program
             endpoints.MapGet("/", async context =>
             {
                 // fetch actor references from the registry
-                var routerForwarderActor = actors.Get<RouterForwarderActor>();
+                var routerForwarderActor = await actors.GetAsync<RouterForwarderActor>();
                 using (var s = tracer.StartActiveSpan("Cluster.Ask"))
                 {
                     // router actor will deliver message randomly to someone in cluster
