@@ -78,10 +78,10 @@ public sealed class RouterForwarderActor : ReceiveActor
     public RouterForwarderActor(IActorRef routerActor)
     {
         _routerActor = routerActor;
-        Receive<string>(_ =>
+        Receive<string>(str =>
         {
-            _log.Info("Received: {0}", _);
-            _routerActor.Forward(_);
+            _log.Info("Received: {0}", str);
+            _routerActor.Forward(str);
         });
     }
 }

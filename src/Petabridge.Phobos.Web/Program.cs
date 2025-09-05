@@ -77,6 +77,9 @@ public class Program
     {
         // Prometheus exporter won't work without this
         services.AddControllers();
+        
+        // add background service
+        services.AddHostedService<PeriodicMessageService>();
 
         // enables OpenTelemetry for ASP.NET / .NET Core
         services.AddOpenTelemetry()
@@ -168,7 +171,7 @@ public class Program
             endpoints.MapGet("/", async context =>
             {
                 // fetch actor references from the registry
-                var routerForwarderActor = actors.Get<RouterForwarderActor>();
+                var routerForwarderActor = await actors.GetAsync<RouterForwarderActor>();
                 using (var s = tracer.StartActiveSpan("Cluster.Ask"))
                 {
                     // router actor will deliver message randomly to someone in cluster
