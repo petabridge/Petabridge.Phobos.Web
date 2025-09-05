@@ -5,9 +5,9 @@
   <!-- Akka.NET Package Versions -->
   <ItemGroup>
     <PackageVersion Include="Akka.Cluster.Hosting" Version="1.5.48" />
-    <PackageVersion Include="Akka.Discovery.Azure" Version="1.5.45.1" />
+    <PackageVersion Include="Akka.Discovery.Azure" Version="1.5.48" />
     <PackageVersion Include="Akka.Logger.Serilog" Version="1.5.25" />
-    <PackageVersion Include="Akka.Management" Version="1.5.45.1" />
+    <PackageVersion Include="Akka.Management" Version="1.5.48" />
     <PackageVersion Include="Aspire.Hosting.Seq" Version="9.4.1" />
     <PackageVersion Include="Aspire.Seq" Version="9.4.1" />
   </ItemGroup>
@@ -17,8 +17,8 @@
   </ItemGroup>
   <!-- Petabridge.Cmd Package Versions -->
   <ItemGroup>
-    <PackageVersion Include="Petabridge.Cmd.Cluster" Version="$(PbmVersion)" />
-    <PackageVersion Include="Petabridge.Cmd.Remote" Version="$(PbmVersion)" />
+    <PackageVersion Include="Petabridge.Cmd.Cluster" Version="1.4.5" />
+    <PackageVersion Include="Petabridge.Cmd.Remote" Version="1.4.5" />
   </ItemGroup>
   <!-- OTel Package Versions -->
   <ItemGroup>
@@ -26,7 +26,6 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.12.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.12.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" Version="1.7.0-rc.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.12.0" />
   </ItemGroup>
   <!-- Aspire Package Versions -->

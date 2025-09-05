@@ -30,7 +30,7 @@ using Phobos.Actor;
 using Phobos.Hosting;
 using LogLevel = Akka.Event.LogLevel;
 
-namespace Petabridge.Phobos.Web;
+namespace DemoPhobos;
 
 public class Program
 {

@@ -13,7 +13,6 @@
         <PackageReference Include="Phobos.Hosting" />
         <PackageReference Include="Petabridge.Cmd.Cluster" />
         <PackageReference Include="Petabridge.Cmd.Remote" />
-        <PackageReference Include="OpenTelemetry.Exporter.Prometheus.AspNetCore" />
       
         <!-- Aspire dependencies -->
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
