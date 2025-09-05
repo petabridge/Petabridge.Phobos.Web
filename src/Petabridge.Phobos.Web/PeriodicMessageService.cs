@@ -20,7 +20,7 @@ public sealed class PeriodicMessageService : BackgroundService
     private readonly ILogger<PeriodicMessageService> _logger;
     private readonly ActorRegistry _actorRegistry;
     private readonly ActivitySource _activitySource;
-    private readonly TimeSpan _interval = TimeSpan.FromSeconds(5);
+    private readonly TimeSpan _interval = TimeSpan.FromSeconds(0.5);
 
     public PeriodicMessageService(ILogger<PeriodicMessageService> logger, ActorRegistry actorRegistry)
     {
