@@ -9,7 +9,6 @@
     <PackageVersion Include="Akka.Logger.Serilog" Version="1.5.25" />
     <PackageVersion Include="Akka.Management" Version="1.5.48" />
     <PackageVersion Include="Aspire.Hosting.Seq" Version="9.4.1" />
-    <PackageVersion Include="Aspire.Seq" Version="9.4.1" />
   </ItemGroup>
   <!-- Phobos Package Versions -->
   <ItemGroup>
