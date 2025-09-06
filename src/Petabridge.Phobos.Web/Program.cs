@@ -15,12 +15,15 @@ using Akka.Management.Cluster.Bootstrap;
 using Akka.Remote.Hosting;
 using Akka.Routing;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Petabridge.Cmd.Cluster;
@@ -34,6 +37,10 @@ namespace DemoPhobos;
 
 public class Program
 {
+    private const string HealthEndpointPath = "/health";
+    private const string AlivenessEndpointPath = "/alive";
+    private const string MetricsEndpointPath = "/metrics";
+    
     public static void Main(string[] args)
     {
         CreateHostBuilder(args).Run();
@@ -41,19 +48,30 @@ public class Program
 
     private static WebApplication CreateHostBuilder(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args)
-            .AddServiceDefaults();
+        var builder = WebApplication.CreateBuilder(args);
         
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.AddEventSourceLogger();
         
-        ConfigureServices(builder.Services);
-        builder.AddSeqEndpoint(connectionName: "seq");
+        // Log OTEL configuration for debugging
+        var aspireEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        var customEndpoint = builder.Configuration["CUSTOM_OTEL_COLLECTOR_ENDPOINT"];
+        Console.WriteLine($"[STARTUP] OTEL_EXPORTER_OTLP_ENDPOINT = {aspireEndpoint ?? "NULL"}");
+        Console.WriteLine($"[STARTUP] CUSTOM_OTEL_COLLECTOR_ENDPOINT = {customEndpoint ?? "NULL"}");
+        
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeFormattedMessage = true;
+            logging.IncludeScopes = true;
+        });
+        
+        ConfigureServices(builder.Services, builder.Configuration);
+        //builder.AddSeqEndpoint(connectionName: "seq");
 
         var app = builder.Build();
         Configure(app, app.Environment);
-        app.MapDefaultEndpoints();
+        MapDefaultEndpoints(app);
             
         return app;
     }
@@ -73,10 +91,17 @@ public class Program
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-    private static void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         // Prometheus exporter won't work without this
         services.AddControllers();
+        
+        // add health checks
+        services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+        
+        // add service discovery
+        services.AddServiceDiscovery();
         
         // add background service
         services.AddHostedService<PeriodicMessageService>();
@@ -87,16 +112,51 @@ public class Program
             {
                 builder
                     .AddPhobosInstrumentation() // enables Phobos tracing instrumentation
-                    .AddSource("Petabridge.Phobos.Web");
+                    .AddSource("Petabridge.Phobos.Web")
+                    .AddAspNetCoreInstrumentation(tracing =>
+                        {
+                            tracing.Filter = context =>
+                                // Exclude metrics scraping requests from tracing
+                                !context.Request.Path.StartsWithSegments(MetricsEndpointPath)
+                                // Exclude health check requests from tracing
+                                && !context.Request.Path.StartsWithSegments(HealthEndpointPath)
+                                && !context.Request.Path.StartsWithSegments(AlivenessEndpointPath);
+                        }
+                    )
+                    .AddHttpClientInstrumentation(options =>
+                    {
+                        // don't trace HTTP output to Seq
+                        options.FilterHttpRequestMessage = httpRequestMessage => !httpRequestMessage.RequestUri?.Host.Contains("seq") ?? false;
+                    });
             })
             .WithMetrics(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation(); // enables Phobos metrics instrumentation
-            });
+                    .AddPhobosInstrumentation() // enables Phobos metrics instrumentation
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation();
+            })
+            .UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.Grpc, GetOtlpEndpoint(configuration));
 
         // sets up Akka.NET
         ConfigureAkka(services);
+    }
+
+    private static Uri GetOtlpEndpoint(IConfiguration configuration)
+    {
+        var customEndpoint = configuration.GetValue<string>("CUSTOM_OTEL_COLLECTOR_ENDPOINT");
+        
+        if (Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uri))
+        {
+            Console.WriteLine($"[OTEL] Using custom collector endpoint: {customEndpoint}");
+            return uri;
+        }
+        else
+        {
+            Console.WriteLine("[OTEL] Using default OTLP exporter configuration");
+            return new Uri("http://localhost:4317"); // Default OTLP gRPC endpoint
+        }
     }
 
     private static void ConfigureAkka(IServiceCollection services)
@@ -181,5 +241,24 @@ public class Program
                 }
             });
         });
+    }
+    
+    public static WebApplication MapDefaultEndpoints(WebApplication app)
+    {
+        // Adding health checks endpoints to applications in non-development environments has security implications.
+        // See https://aka.ms/dotnet/aspire/healthchecks for details before enabling these endpoints in non-development environments.
+        if (app.Environment.IsDevelopment())
+        {
+            // All health checks must pass for app to be considered ready to accept traffic after starting
+            app.MapHealthChecks(HealthEndpointPath);
+
+            // Only health checks tagged with the "live" tag must pass for app to be considered alive
+            app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
+            {
+                Predicate = r => r.Tags.Contains("live")
+            });
+        }
+
+        return app;
     }
 }
