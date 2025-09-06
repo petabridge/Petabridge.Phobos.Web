@@ -15,6 +15,7 @@ using Akka.Management.Cluster.Bootstrap;
 using Akka.Remote.Hosting;
 using Akka.Routing;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -36,6 +37,10 @@ namespace DemoPhobos;
 
 public class Program
 {
+    private const string HealthEndpointPath = "/health";
+    private const string AlivenessEndpointPath = "/alive";
+    private const string MetricsEndpointPath = "/metrics";
+    
     public static void Main(string[] args)
     {
         CreateHostBuilder(args).Run();
@@ -66,7 +71,7 @@ public class Program
 
         var app = builder.Build();
         Configure(app, app.Environment);
-        app.MapDefaultEndpoints();
+        MapDefaultEndpoints(app);
             
         return app;
     }
@@ -108,8 +113,21 @@ public class Program
                 builder
                     .AddPhobosInstrumentation() // enables Phobos tracing instrumentation
                     .AddSource("Petabridge.Phobos.Web")
-                    .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddAspNetCoreInstrumentation(tracing =>
+                        {
+                            tracing.Filter = context =>
+                                // Exclude metrics scraping requests from tracing
+                                !context.Request.Path.StartsWithSegments(MetricsEndpointPath)
+                                // Exclude health check requests from tracing
+                                && !context.Request.Path.StartsWithSegments(HealthEndpointPath)
+                                && !context.Request.Path.StartsWithSegments(AlivenessEndpointPath);
+                        }
+                    )
+                    .AddHttpClientInstrumentation(options =>
+                    {
+                        // don't trace HTTP output to Seq
+                        options.FilterHttpRequestMessage = httpRequestMessage => !httpRequestMessage.RequestUri?.Host.Contains("seq") ?? false;
+                    });
             })
             .WithMetrics(builder =>
             {
@@ -223,5 +241,24 @@ public class Program
                 }
             });
         });
+    }
+    
+    public static WebApplication MapDefaultEndpoints(WebApplication app)
+    {
+        // Adding health checks endpoints to applications in non-development environments has security implications.
+        // See https://aka.ms/dotnet/aspire/healthchecks for details before enabling these endpoints in non-development environments.
+        if (app.Environment.IsDevelopment())
+        {
+            // All health checks must pass for app to be considered ready to accept traffic after starting
+            app.MapHealthChecks(HealthEndpointPath);
+
+            // Only health checks tagged with the "live" tag must pass for app to be considered alive
+            app.MapHealthChecks(AlivenessEndpointPath, new HealthCheckOptions
+            {
+                Predicate = r => r.Tags.Contains("live")
+            });
+        }
+
+        return app;
     }
 }

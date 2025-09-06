@@ -12,7 +12,6 @@ public static class OpenTelemetryCollectorResourceBuilderExtensions
 
     public static IResourceBuilder<OpenTelemetryCollectorResource> AddOpenTelemetryCollector(this IDistributedApplicationBuilder builder, string name, string configFileLocation)
     {
-        builder.AddOpenTelemetryCollectorInfrastructure();
 
         var url = builder.Configuration[DashboardOtlpUrlVariableName] ?? DashboardOtlpUrlDefaultValue;
         var isHttpsEnabled = url.StartsWith("https", StringComparison.OrdinalIgnoreCase);
