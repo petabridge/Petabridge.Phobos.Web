@@ -146,17 +146,22 @@ public class Program
     private static Uri GetOtlpEndpoint(IConfiguration configuration)
     {
         var customEndpoint = configuration.GetValue<string>("CUSTOM_OTEL_COLLECTOR_ENDPOINT");
+        var defaultEndpoint = configuration.GetValue<string>("OTEL_EXPORTER_OTLP_ENDPOINT");
         
         if (Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uri))
         {
             Console.WriteLine($"[OTEL] Using custom collector endpoint: {customEndpoint}");
             return uri;
         }
-        else
+
+        if (Uri.TryCreate(defaultEndpoint, UriKind.Absolute, out uri))
         {
-            Console.WriteLine("[OTEL] Using default OTLP exporter configuration");
-            return new Uri("http://localhost:4317"); // Default OTLP gRPC endpoint
+            Console.WriteLine($"[OTEL] Using default collector endpoint: {defaultEndpoint}");
+            return uri;
         }
+
+        Console.WriteLine("[OTEL] Using default OTLP exporter configuration");
+        return new Uri("http://localhost:4317"); // Default OTLP gRPC endpoint
     }
 
     private static void ConfigureAkka(IServiceCollection services)
