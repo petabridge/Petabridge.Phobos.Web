@@ -56,7 +56,7 @@ public sealed class ConsoleActor : ReceiveActor
             using (var newSpan = Context.GetInstrumentation().Tracer.StartActiveSpan("SecondOp"))
             {
                 var child = Context.ActorOf(Props.Create(() => new ChildActor()));
-                _log.Info("Spawned {child}", child);
+                _log.Info("Spawned {0}", child);
 
                 child.Forward(_);
             }
