@@ -19,8 +19,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Petabridge.Cmd.Cluster;
@@ -41,15 +43,20 @@ public class Program
 
     private static WebApplication CreateHostBuilder(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args)
-            .AddServiceDefaults();
+        var builder = WebApplication.CreateBuilder(args);
         
         builder.Logging.ClearProviders();
         builder.Logging.AddConsole();
         builder.Logging.AddEventSourceLogger();
         
+        builder.Logging.AddOpenTelemetry(logging =>
+        {
+            logging.IncludeFormattedMessage = true;
+            logging.IncludeScopes = true;
+        });
+        
         ConfigureServices(builder.Services);
-        builder.AddSeqEndpoint(connectionName: "seq");
+        //builder.AddSeqEndpoint(connectionName: "seq");
 
         var app = builder.Build();
         Configure(app, app.Environment);
@@ -78,6 +85,13 @@ public class Program
         // Prometheus exporter won't work without this
         services.AddControllers();
         
+        // add health checks
+        services.AddHealthChecks()
+            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+        
+        // add service discovery
+        services.AddServiceDiscovery();
+        
         // add background service
         services.AddHostedService<PeriodicMessageService>();
 
@@ -87,13 +101,19 @@ public class Program
             {
                 builder
                     .AddPhobosInstrumentation() // enables Phobos tracing instrumentation
-                    .AddSource("Petabridge.Phobos.Web");
+                    .AddSource("Petabridge.Phobos.Web")
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation();
             })
             .WithMetrics(builder =>
             {
                 builder
-                    .AddPhobosInstrumentation(); // enables Phobos metrics instrumentation
-            });
+                    .AddPhobosInstrumentation() // enables Phobos metrics instrumentation
+                    .AddAspNetCoreInstrumentation()
+                    .AddHttpClientInstrumentation()
+                    .AddRuntimeInstrumentation();
+            })
+            .UseOtlpExporter();
 
         // sets up Akka.NET
         ConfigureAkka(services);

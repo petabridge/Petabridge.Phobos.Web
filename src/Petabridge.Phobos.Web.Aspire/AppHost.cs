@@ -27,8 +27,8 @@ var grafana = builder.AddContainer("grafana", "grafana/grafana")
     .WithHttpEndpoint(port: 3000, targetPort: 3000, name: "http")
     .WithLifetime(ContainerLifetime.Session); // Force fresh container each run
 
-builder.AddOpenTelemetryCollector("otelcollector", "./otel_collector/config.yaml")
-    .WithEnvironment("SEQ_ENDPOINT", $"{prometheus.GetEndpoint("http")}/ingest/otlp")
+var otelCollector = builder.AddOpenTelemetryCollector("otelcollector", "./otel_collector/config.yaml")
+    .WithEnvironment("SEQ_ENDPOINT", $"{seq.GetEndpoint("http")}/ingest/otlp")
     .WithEnvironment("PROMETHEUS_ENDPOINT", $"{prometheus.GetEndpoint("http")}/api/v1/otlp");
 
 #endregion
