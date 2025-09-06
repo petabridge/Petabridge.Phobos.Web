@@ -49,13 +49,19 @@ public class Program
         builder.Logging.AddConsole();
         builder.Logging.AddEventSourceLogger();
         
+        // Log OTEL configuration for debugging
+        var aspireEndpoint = builder.Configuration["OTEL_EXPORTER_OTLP_ENDPOINT"];
+        var customEndpoint = builder.Configuration["CUSTOM_OTEL_COLLECTOR_ENDPOINT"];
+        Console.WriteLine($"[STARTUP] OTEL_EXPORTER_OTLP_ENDPOINT = {aspireEndpoint ?? "NULL"}");
+        Console.WriteLine($"[STARTUP] CUSTOM_OTEL_COLLECTOR_ENDPOINT = {customEndpoint ?? "NULL"}");
+        
         builder.Logging.AddOpenTelemetry(logging =>
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
         });
         
-        ConfigureServices(builder.Services);
+        ConfigureServices(builder.Services, builder.Configuration);
         //builder.AddSeqEndpoint(connectionName: "seq");
 
         var app = builder.Build();
@@ -80,7 +86,7 @@ public class Program
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-    private static void ConfigureServices(IServiceCollection services)
+    private static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         // Prometheus exporter won't work without this
         services.AddControllers();
@@ -113,10 +119,26 @@ public class Program
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
-            .UseOtlpExporter();
+            .UseOtlpExporter(OpenTelemetry.Exporter.OtlpExportProtocol.Grpc, GetOtlpEndpoint(configuration));
 
         // sets up Akka.NET
         ConfigureAkka(services);
+    }
+
+    private static Uri GetOtlpEndpoint(IConfiguration configuration)
+    {
+        var customEndpoint = configuration.GetValue<string>("CUSTOM_OTEL_COLLECTOR_ENDPOINT");
+        
+        if (Uri.TryCreate(customEndpoint, UriKind.Absolute, out var uri))
+        {
+            Console.WriteLine($"[OTEL] Using custom collector endpoint: {customEndpoint}");
+            return uri;
+        }
+        else
+        {
+            Console.WriteLine("[OTEL] Using default OTLP exporter configuration");
+            return new Uri("http://localhost:4317"); // Default OTLP gRPC endpoint
+        }
     }
 
     private static void ConfigureAkka(IServiceCollection services)
