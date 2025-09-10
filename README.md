@@ -1,7 +1,10 @@
 # Petabridge.Phobos.Web
-_This repository contains the source code for the [Phobos Quickstart Tutorial, which you can read here](https://phobos.petabridge.com/articles/quickstart.html)_.
 
-> NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards/prometheus-dashboard.html#phobos-2x), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/15637 and here https://grafana.com/grafana/dashboards/15638. The source for these dashboards can be found at https://github.com/petabridge/phobos-dashboards
+**📖 Full Tutorial**: [Phobos QuickStart - OpenTelemetry for Akka.NET in 5 Minutes](https://phobos.petabridge.com/articles/quickstart.html)
+
+This repository demonstrates how to get OpenTelemetry metrics and traces from your Akka.NET application in minutes using Phobos.
+
+> NOTE: this solution uses the [shared Phobos + Prometheus Akka.Cluster dashboard for Grafana built by Petabridge](https://phobos.petabridge.com/articles/dashboards.html), which you can install in your own application via Grafana Cloud here: https://grafana.com/grafana/dashboards/15637 and here https://grafana.com/grafana/dashboards/15638. The source for these dashboards can be found at https://github.com/petabridge/phobos-dashboards
 
 > This sample has been updated for [Phobos 2.x and OpenTelemetry](https://phobos.petabridge.com/articles/releases/whats-new-in-phobos-2.0.0.html) - if you need access to the old 1.x version of this sample please see https://github.com/petabridge/Petabridge.Phobos.Web/tree/1.x
 
@@ -38,19 +41,15 @@ Once you purchase a [Phobos NuGet keys for your organization](https://phobos.pet
 </configuration>
 ```
 
-## Running From Your IDE
+## Running the Sample
 
-To run the sample from your IDE (Visual Studio 2022, Visual Studio Code, or JetBrains Rider), simply run the `Petabridge.Phobos.Web.Aspire: https` launch profile. The Aspire dashboard should automatically launch in a browser window. If it is blocked, you can manually open the Aspire dashboard [here](http://localhost:15266).
+Run the following command from the repository root:
 
-## Running From Console
-
-Run the following command on the prompt inside the solution folder:
-
-```
-PS> .\run.cmd
+```bash
+dotnet run --project src/Petabridge.Phobos.Web.Aspire/Petabridge.Phobos.Web.Aspire.csproj
 ```
 
-Once the project is running, you can manually open the Aspire dashboard [here](http://localhost:15266).
+The Aspire dashboard will automatically open in your browser. If it doesn't, check the console output for the dashboard URL.
 
 ## Aspire Dashboard
 
