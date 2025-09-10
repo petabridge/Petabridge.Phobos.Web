@@ -1,1 +1,1 @@
-dotnet run --project .\src\Petabridge.Phobos.Web.Aspire\Petabridge.Phobos.Web.Aspire.csproj -c Release --launch-profile "https"
+dotnet run --project .\src\Petabridge.Phobos.Web.Aspire\Petabridge.Phobos.Web.Aspire.csproj
