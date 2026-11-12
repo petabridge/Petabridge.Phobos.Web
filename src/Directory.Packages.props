@@ -32,7 +32,7 @@
     <PackageVersion Include="Aspire.Hosting.AppHost" Version="9.4.2" />
     <PackageVersion Include="Aspire.Hosting.Azure.Storage" Version="9.4.2" />
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.7.0" />
-    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.4.1" />
+    <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="11.0.0" />
   </ItemGroup>
   <!-- Test Package Versions -->
   <ItemGroup>
