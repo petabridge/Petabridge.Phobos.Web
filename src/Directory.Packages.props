@@ -40,6 +40,6 @@
     <PackageVersion Include="xunit" Version="$(XunitVersion)" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="$(XunitRunnerVersion)" />
     <PackageVersion Include="coverlet.collector" Version="3.2.0" />
-    <PackageVersion Include="Akka.TestKit.XUnit2" Version="1.5.32" />
+    <PackageVersion Include="Akka.TestKit.XUnit2" Version="1.5.74" />
   </ItemGroup>
 </Project>
